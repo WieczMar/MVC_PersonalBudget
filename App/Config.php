@@ -2,11 +2,7 @@
 
 namespace App;
 
-/**
- * Application configuration
- *
- * PHP version 5.4
- */
+//Application configuration
 class Config
 {
 
@@ -20,7 +16,7 @@ class Config
      * Database name
      * @var string
      */
-    const DB_NAME = 'mvc';
+    const DB_NAME = 'personal_budget';
 
     /**
      * Database user

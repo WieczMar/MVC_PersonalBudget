@@ -4,8 +4,8 @@ namespace App\Controllers;
 
 use \Core\View;
 
-//Home controller
-class Home extends \Core\Controller
+//Signup controller
+class Signout extends \Core\Controller
 {
 
     /**
@@ -15,7 +15,8 @@ class Home extends \Core\Controller
      */
     protected function before()
     {
-        session_start();
+        //echo "(before) ";
+        //return false;
     }
 
     /**
@@ -35,15 +36,8 @@ class Home extends \Core\Controller
      */
     public function indexAction()
     {
-        if ((isset($_SESSION['loggedIn']))&&($_SESSION['loggedIn']==true))
-        {
-            View::renderTemplate('Home/home.html', [
-                'username' => $_SESSION['username'],
-            ]);
-        }
-        else{
-            View::renderTemplate('Home/index.html');
-        }
-
+        session_start();
+        session_unset(); 
+        header('Location: /home/index');
     }
 }
