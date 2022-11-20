@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Sign in{% endblock %}
+
+{% block body %}
+<nav id="mainNavbar" class="navbar navbar-expand-sm navbar-dark bg-gradient">
+  <div class="container">
+    <a class="navbar-brand btn disabled" href="#">MENU</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks"
+      aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navLinks">
+      <ul class="navbar-nav">
+        <li class="nav-item d-flex flex-row align-items-center">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+              class="bi bi-house-door" viewBox="0 0 16 16">
+              <path
+                d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z" />
+            </svg>
+          </div>
+          <a class="nav-link active" aria-current="page" href="/home/index">About site</a>
+        </li>
+        <li class="nav-item d-flex flex-row align-items-center">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+              class="bi bi-plus-circle" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+              <path
+                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+            </svg>
+          </div>
+          <a class="nav-link active" aria-current="page" href="/signup/index">Sign up</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="row justify-content-center align-items-center">
+    <div class="col-10 col-md-8 col-lg-6 col-xl-5 panel">
+      <div class="text-center panel-title">Sign in to your account</div>
+      {% if loginError %}
+      <div class="text-center" style="color:red; padding-top:20px">Wrong email or password!</div>
+      {% endif %}
+      <form method="post" action="/signin/enter">
+        <div class="form-group input-data">
+          <label for="email" class="form-label">Email</label>
+          <div class="input-group">
+            <span class="input-group-text" id="basic-addon2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-envelope-fill" viewBox="0 0 16 16">
+                <path
+                  d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z" />
+              </svg>
+            </span>
+            <input type="text" class="form-control" id="email" name="email" placeholder="email" aria-describedby="basic-addon2">
+          </div>
+        </div>
+        <div class="form-group input-data">
+          <label for="password" class="form-label">Password</label>
+          <div class="input-group">
+            <span class="input-group-text" id="basic-addon3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock"
+                viewBox="0 0 16 16">
+                <path
+                  d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+              </svg>
+            </span>
+            <input type="password" class="form-control" id="password" name="password" placeholder="password"
+              aria-describedby="basic-addon3">
+          </div>
+        </div>
+        <div class="d-flex justify-content-center">
+          <button type="submit" class="btn btn-primary button">Sign in</button>
+        </div>
+      </form>
+      <div class="already-registered">
+        <span>Do not have an account? </span>
+        <a class="link" href="/signup/index">Sign up</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

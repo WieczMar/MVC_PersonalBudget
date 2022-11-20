@@ -2,14 +2,9 @@
 
 namespace Core;
 
-/**
- * View
- *
- * PHP version 5.4
- */
+// View
 class View
 {
-
     /**
      * Render a view file
      *
