@@ -7,36 +7,21 @@ use \Core\View;
 //Signup controller
 class Signout extends \Core\Controller
 {
-
-    /**
-     * Before filter
-     *
-     * @return void
-     */
+    //Before filter
     protected function before()
     {
-        //echo "(before) ";
-        //return false;
+        session_start();
     }
 
-    /**
-     * After filter
-     *
-     * @return void
-     */
+    //After filter
     protected function after()
     {
-        //echo " (after)";
+
     }
 
-    /**
-     * Show the index page
-     *
-     * @return void
-     */
+    //Show the index page
     public function indexAction()
     {
-        session_start();
         session_unset(); 
         header('Location: /home/index');
     }

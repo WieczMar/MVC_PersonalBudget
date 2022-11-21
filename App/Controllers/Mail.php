@@ -1,14 +1,19 @@
 <?php
 
 namespace App\Controllers;
-
-/**
- * Posts controller
- *
- * PHP version 5.4
- */
+//Mail controller
 class Mail extends \Core\Controller
 {
+    //Before filter
+    protected function before()
+    {
+    }
+
+    //After filter
+    protected function after()
+    {
+    }
+
     public static function sendSignupConfirmation($name, $email)
     {
         $to = $email;
