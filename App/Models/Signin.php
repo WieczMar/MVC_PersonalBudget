@@ -6,12 +6,6 @@ use PDO;
 
 class Signin extends \Core\Model
 {
-
-    /**
-     * Get all the posts as an associative array
-     *
-     * @return array
-     */
     public static function getUser($email)
     {
         try {

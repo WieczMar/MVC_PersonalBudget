@@ -7,32 +7,18 @@ use \Core\View;
 //Home controller
 class Home extends \Core\Controller
 {
-
-    /**
-     * Before filter
-     *
-     * @return void
-     */
+    //Before filter
     protected function before()
     {
         session_start();
     }
 
-    /**
-     * After filter
-     *
-     * @return void
-     */
+    //After filter
     protected function after()
     {
-        //echo " (after)";
     }
 
-    /**
-     * Show the index page
-     *
-     * @return void
-     */
+    //Show the index page
     public function indexAction()
     {
         if ((isset($_SESSION['loggedIn']))&&($_SESSION['loggedIn']==true))
