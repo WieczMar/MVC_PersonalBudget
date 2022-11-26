@@ -34,7 +34,7 @@ class Expense extends \Core\Controller
             unset($_SESSION['savingTransactionCompleted']);
         }
         else{           
-            header('Location: /home/index');
+            header('Location: http://'.$_SERVER['HTTP_HOST'].'/home/index');
         }
     }
 
@@ -46,7 +46,7 @@ class Expense extends \Core\Controller
             $_SESSION['savingTransactionCompleted'] = true;
 
         }
-        header('Location: /expense/index');
+        header('Location: http://'.$_SERVER['HTTP_HOST'].'/expense/index');
     }       
 
 }

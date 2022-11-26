@@ -56,7 +56,7 @@ class Balance extends \Core\Controller
         }
         else{
             
-            header('Location: /home/index');
+            header('Location: http://'.$_SERVER['HTTP_HOST'].'/home/index');
             
         }
         

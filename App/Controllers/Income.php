@@ -32,7 +32,7 @@ class Income extends \Core\Controller
             unset($_SESSION['savingTransactionCompleted']);
         }
         else{           
-            header('Location: /home/index');
+            header('Location: http://'.$_SERVER['HTTP_HOST'].'/home/index');
         }
         
     }
@@ -45,7 +45,7 @@ class Income extends \Core\Controller
             $_SESSION['savingTransactionCompleted'] = true;
 
         }
-        header('Location: /income/index');
+        header('Location: http://'.$_SERVER['HTTP_HOST'].'/income/index');
     }       
 
 }

@@ -23,6 +23,6 @@ class Signout extends \Core\Controller
     public function indexAction()
     {
         session_unset(); 
-        header('Location: /home/index');
+        header('Location: http://'.$_SERVER['HTTP_HOST'].'/home/index');
     }
 }
