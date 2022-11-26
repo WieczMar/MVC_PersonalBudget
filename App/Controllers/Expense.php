@@ -9,14 +9,11 @@ class Expense extends \Core\Controller
 {
     //Before filter
     protected function before()
-    {
-        session_start();
-    }
+    {}
 
     //After filter
     protected function after()
-    {
-    }
+    {}
 
     //Show the index page
     public function indexAction()
@@ -34,7 +31,7 @@ class Expense extends \Core\Controller
             unset($_SESSION['savingTransactionCompleted']);
         }
         else{           
-            header('Location: http://'.$_SERVER['HTTP_HOST'].'/home/index');
+            $this->redirect('/home/index');
         }
     }
 

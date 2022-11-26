@@ -10,13 +10,10 @@ class Balance extends \Core\Controller
 {
     //Before filter
     protected function before()
-    {
-        session_start();
-    }
+    {}
 
     protected function after()
-    {
-    }
+    {}
 
     public function indexAction()
     {
@@ -56,7 +53,7 @@ class Balance extends \Core\Controller
         }
         else{
             
-            header('Location: http://'.$_SERVER['HTTP_HOST'].'/home/index');
+            $this->redirect('/home/index');
             
         }
         

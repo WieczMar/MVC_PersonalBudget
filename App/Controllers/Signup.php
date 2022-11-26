@@ -9,22 +9,23 @@ class Signup extends \Core\Controller
 {
     //Before filter
     protected function before()
-    {
-        session_start();
-    }
+    {}
 
     //After filter
     protected function after()
-    {
-    }
+    {}
 
     //Show the index page
     public function indexAction()
     {
+        if(!isset($_SESSION['user'])) $_SESSION['user'] = "";
+
         View::renderTemplate('Signup/index.html', [
-            'registrationCompleted' => isset($_SESSION['registrationCompleted'])
+            'registrationCompleted' => isset($_SESSION['registrationCompleted']),
+            'user' => $_SESSION['user']
         ]);
         unset($_SESSION['registrationCompleted']);
+        unset($_SESSION['user']);
     }
 
     public function addAction()
@@ -37,16 +38,15 @@ class Signup extends \Core\Controller
     
                 //Mail::sendSignupConfirmation($this->$name, $this->$email);
                 $_SESSION['registrationCompleted'] = true;
-                header('Location: http://'.$_SERVER['HTTP_HOST'] .'/signup/index');
+                $this->redirect('/signup/index');
                 exit();
     
             } else {
-                View::renderTemplate('Signup/index.html', [
-                    'user' => $user
-                ]);
+                $_SESSION['user'] = $user;
+                $this->redirect('/signup/index');
             }
         } else{
-            header('Location: http://'.$_SERVER['HTTP_HOST'] .'/signup/index');
+            $this->redirect('/signup/index');
         }
     }
 

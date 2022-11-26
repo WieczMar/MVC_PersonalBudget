@@ -85,7 +85,7 @@
                   <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
                 </svg>
               </span>
-              <input type="text" class="form-control" id="name" placeholder="name" name="name" aria-describedby="basic-addon1" value="{{user.name}}">
+              <input type="text" class="form-control" id="name" placeholder="name" name="name" aria-describedby="basic-addon1" value="{{user.name}}" required>
             </div>
             {% if user.errors.name %}
             <div class="incorrect-validation-text">{{user.errors.name}}</div>
@@ -101,7 +101,7 @@
                     d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z" />
                 </svg>
               </span>
-              <input type="text" class="form-control" id="email" name="email" placeholder="email" aria-describedby="basic-addon2" value="{{user.email}}">
+              <input type="text" class="form-control" id="email" name="email" placeholder="email" aria-describedby="basic-addon2" value="{{user.email}}" required>
             </div>
             {% if user.errors.email %}
             <div class="incorrect-validation-text">{{user.errors.email}}</div>
@@ -117,7 +117,7 @@
                     d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
                 </svg>
               </span>
-              <input type="password" class="form-control password-input" id="password" name="password" placeholder="password" aria-describedby="basic-addon3">
+              <input type="password" class="form-control password-input" id="password" name="password" placeholder="password" aria-describedby="basic-addon3" required>
                   <i class="bi bi-eye-slash" id="togglePassword"></i>
             </div>
             {% if user.errors.password %}

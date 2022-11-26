@@ -9,14 +9,11 @@ class Income extends \Core\Controller
 {
     //Before filter
     protected function before()
-    {
-        session_start();
-    }
+    {}
 
     //After filter
     protected function after()
-    {
-    }
+    {}
 
     //Show the index page
     public function indexAction()
@@ -31,8 +28,8 @@ class Income extends \Core\Controller
             ]);
             unset($_SESSION['savingTransactionCompleted']);
         }
-        else{           
-            header('Location: http://'.$_SERVER['HTTP_HOST'].'/home/index');
+        else{
+            $this->redirect('/home/index');
         }
         
     }
@@ -45,7 +42,7 @@ class Income extends \Core\Controller
             $_SESSION['savingTransactionCompleted'] = true;
 
         }
-        header('Location: http://'.$_SERVER['HTTP_HOST'].'/income/index');
+        $this->redirect('/income/index');
     }       
 
 }

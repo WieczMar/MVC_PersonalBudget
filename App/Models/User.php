@@ -8,7 +8,7 @@ class User extends \Core\Model
 {
     public $errors = [];
 
-    public function __construct($data)
+    public function __construct($data = [])
     {
         foreach ($data as $key => $value) {
                 $key = preg_replace('/-/', '_', $key); // change dash to underscore in variable names
@@ -17,22 +17,17 @@ class User extends \Core\Model
         };
     }
 
-    public static function getUser($email)
+    public static function authenticate($email, $password)
     {
-        try {
+        $user = self::getUserByEmail($email);
 
-            $db = static::getDB();
-            $statement = $db->prepare("SELECT * FROM users WHERE email=:email");
-            $statement->bindValue(':email', $email, PDO::PARAM_STR);
-            $statement->execute();
-            $user = $statement->fetchObject();
-
-            return $user;
-
-        } catch (PDOException $e) {
-            echo $e->getMessage();
+        if ($user) {
+            if (password_verify($password, $user->password)) {
+                return $user;
+            }
         }
 
+        return false;
     }
 
     public function saveNewUser()
@@ -66,6 +61,24 @@ class User extends \Core\Model
         }
 
         return false;
+    }
+
+    private static function getUserByEmail($email)
+    {
+        try {
+
+            $db = static::getDB();
+            $statement = $db->prepare("SELECT * FROM users WHERE email=:email");
+            $statement->bindValue(':email', $email, PDO::PARAM_STR);
+            $statement->execute();
+            $user = $statement->fetchObject();
+
+            return $user;
+
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+
     }
 
     private function isEmailAlreadyUsed()
