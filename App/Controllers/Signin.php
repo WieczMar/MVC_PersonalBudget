@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use \Core\View;
 use \App\Models\User;
+use \App\Auth;
 
 //Signin controller
 class Signin extends \Core\Controller
@@ -19,7 +20,7 @@ class Signin extends \Core\Controller
     //Show the index page
     public function indexAction()
     {
-        if ((isset($_SESSION['loggedIn']))&&($_SESSION['loggedIn']==true))
+        if (isset($_SESSION['userId']))
         {
             $this->redirect('/home/index');
             exit();
@@ -37,6 +38,7 @@ class Signin extends \Core\Controller
         }
     }
 
+    //Log in a user
     public function enterAction()
     {
         if(isset($_POST['email']))
@@ -45,13 +47,11 @@ class Signin extends \Core\Controller
 
              if ($user) 
              {
-                session_regenerate_id(true); // generate new session id and prevent session fixation attack
+                Auth::login($user);
 
-                $_SESSION['loggedIn'] = true; 
                 unset($_SESSION['loginError']);
-                $_SESSION['userId'] = $user->id; 
-                $_SESSION['username'] = $user->username; 
-                $this->redirect('/home/index');
+
+                $this->redirect(Auth::getReturnToPage());
                 exit();
 
             } else {

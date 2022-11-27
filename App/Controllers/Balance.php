@@ -6,57 +6,40 @@ use \Core\View;
 use \App\Models\Balance as BalanceModel;
 
 //Signin controller
-class Balance extends \Core\Controller
+class Balance extends Authenticated
 {
-    //Before filter
-    protected function before()
-    {}
-
-    protected function after()
-    {}
-
     public function indexAction()
     {
-        if ((isset($_SESSION['loggedIn']))&&($_SESSION['loggedIn']==true))
-        {
-            if (!isset($_POST['selectedPeriod'])) $selectedPeriod = "Current month"; // first entry on balance page after logging
-            else $selectedPeriod = $_POST['selectedPeriod'];
+        if (!isset($_POST['selectedPeriod'])) $selectedPeriod = "Current month"; // first entry on balance page after logging
+        else $selectedPeriod = $_POST['selectedPeriod'];
 
-            $periods = array('Current month', 'Previous month', 'Current year', 'Nonstandard');
+        $periods = array('Current month', 'Previous month', 'Current year', 'Nonstandard');
 
-            // get date range
-            list($startDate, $endDate) = self::getDateRange($selectedPeriod);
+        // get date range
+        list($startDate, $endDate) = self::getDateRange($selectedPeriod);
 
-            // get incomes data from database
-            $rowsIncomes = BalanceModel::getIncomes($_SESSION['userId'], $startDate, $endDate);
-            list($rowsIncomes, $sumOfIncomes) = self::formatAndAggregateBudgetData($rowsIncomes);
+        // get incomes data from database
+        $rowsIncomes = BalanceModel::getIncomes($_SESSION['userId'], $startDate, $endDate);
+        list($rowsIncomes, $sumOfIncomes) = self::formatAndAggregateBudgetData($rowsIncomes);
 
-            // get expenses data from database
-            $rowsExpenses = BalanceModel::getExpenses($_SESSION['userId'], $startDate, $endDate);
-            list($rowsExpenses, $sumOfExpenses) = self::formatAndAggregateBudgetData($rowsExpenses);
-            
-            $balance = number_format($sumOfIncomes - $sumOfExpenses, 2,  '.', '');
-            
-            View::renderTemplate('Balance/index.html', [
-                'wrongDateRange' => isset($_SESSION['wrongDateRange']),
-                'periods' => $periods,
-                'selectedPeriod' => $selectedPeriod,
-                'rowsIncomes' => $rowsIncomes,
-                'rowsExpenses' => $rowsExpenses,
-                'sumOfIncomes' => $sumOfIncomes,
-                'sumOfExpenses' =>  $sumOfExpenses,
-                'balance' => $balance
-            ]);
-
-            unset($_SESSION['wrongDateRange']);
-
-        }
-        else{
-            
-            $this->redirect('/home/index');
-            
-        }
+        // get expenses data from database
+        $rowsExpenses = BalanceModel::getExpenses($_SESSION['userId'], $startDate, $endDate);
+        list($rowsExpenses, $sumOfExpenses) = self::formatAndAggregateBudgetData($rowsExpenses);
         
+        $balance = number_format($sumOfIncomes - $sumOfExpenses, 2,  '.', '');
+        
+        View::renderTemplate('Balance/index.html', [
+            'wrongDateRange' => isset($_SESSION['wrongDateRange']),
+            'periods' => $periods,
+            'selectedPeriod' => $selectedPeriod,
+            'rowsIncomes' => $rowsIncomes,
+            'rowsExpenses' => $rowsExpenses,
+            'sumOfIncomes' => $sumOfIncomes,
+            'sumOfExpenses' =>  $sumOfExpenses,
+            'balance' => $balance
+        ]);
+
+        unset($_SESSION['wrongDateRange']);  
     }
 
     private static function getDateRange($selectedPeriod)

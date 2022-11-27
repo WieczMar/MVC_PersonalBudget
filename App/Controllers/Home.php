@@ -18,11 +18,9 @@ class Home extends \Core\Controller
     //Show the index page
     public function indexAction()
     {
-        if ((isset($_SESSION['loggedIn']))&&($_SESSION['loggedIn']==true))
+        if (isset($_SESSION['userId']))
         {
-            View::renderTemplate('Home/home.html', [
-                'username' => $_SESSION['username'],
-            ]);
+            View::renderTemplate('Home/home.html');
         }
         else{
             View::renderTemplate('Home/index.html');
