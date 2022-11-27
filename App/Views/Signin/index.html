@@ -42,8 +42,8 @@
   <div class="row justify-content-center align-items-center">
     <div class="col-10 col-md-8 col-lg-6 col-xl-5 panel">
       <div class="text-center panel-title">Sign in to your account</div>
-      {% if loginError %}
-      <div class="text-center" style="color:red; padding-top:20px">Wrong email or password!</div>
+      {% if flashMessages.loginError %}
+      <div class="text-center flash-message flash-message-{{flashMessages.loginError.type}}">{{flashMessages.loginError.body}}</div>
       {% endif %}
       <form method="post" action="/signin/enter">
         <div class="form-group input-data">

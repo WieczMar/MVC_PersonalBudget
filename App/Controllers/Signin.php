@@ -5,6 +5,7 @@ namespace App\Controllers;
 use \Core\View;
 use \App\Models\User;
 use \App\Auth;
+use \App\Flash;
 
 //Signin controller
 class Signin extends \Core\Controller
@@ -30,10 +31,8 @@ class Signin extends \Core\Controller
             if(!isset($_SESSION['email'])) $_SESSION['email'] = "";
             
             View::renderTemplate('Signin/index.html', [
-                'loginError' => isset($_SESSION['loginError']),
                 'email' => $_SESSION['email']
             ]);
-            unset($_SESSION['loginError']);
             unset($_SESSION['email']);
         }
     }
@@ -49,19 +48,15 @@ class Signin extends \Core\Controller
              {
                 Auth::login($user);
 
-                unset($_SESSION['loginError']);
-
                 $this->redirect(Auth::getReturnToPage());
                 exit();
 
             } else {
                 $_SESSION['email'] = $_POST['email'];
-                $_SESSION['loginError'] = true;
-                $this->redirect('/signin/index');
             }   
-        } else {
+        } 
+        Flash::addMessage('loginError' , 'Wrong email or password!', Flash::WARNING);
+        $this->redirect('/signin/index');
 
-            $this->redirect('/signin/index');
-        }
     }
 }

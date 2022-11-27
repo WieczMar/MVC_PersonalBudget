@@ -83,8 +83,8 @@
 <div class="container">
   <div class="row justify-content-center align-items-center">
       <div class="col-10 col-md-8 col-lg-6 col-xl-5 panel">
-          {% if savingTransactionCompleted %}
-          <div class="d-flex justify-content-center" style="color:green; padding-top:20px">You have successfully added new income!</div>
+          {% if flashMessages.savingTransactionResult %}
+          <div class="d-flex justify-content-center flash-message flash-message-{{flashMessages.savingTransactionResult.type}}">{{flashMessages.savingTransactionResult.body}}</div>
           {% endif %}
           <div class="text-center panel-title">Add income</div>
           <form action="/income/add" method="post">

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use PDO;
+use \App\Flash;
 
 class User extends \Core\Model
 {
@@ -160,6 +161,7 @@ class User extends \Core\Model
         if ((strlen($this->name) < 3) || (strlen($this->name) > 30)) 
         {
             $this->errors['name']="Name has to be at least 3 and up to 30 sign length!";
+            
         }
         else if (ctype_alnum($this->name) == false) // check if argument has only alphanumeric signs
         {

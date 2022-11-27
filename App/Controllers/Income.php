@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use \Core\View;
 use \App\Models\Income as IncomeModel;
+use \App\Flash;
+
 //Signin controller
 class Income extends Authenticated
 {
@@ -13,10 +15,8 @@ class Income extends Authenticated
         $rowsIncomeCategory = IncomeModel::getIncomeCategories($_SESSION['userId']);
 
         View::renderTemplate('Income/index.html', [
-            'savingTransactionCompleted' => isset($_SESSION['savingTransactionCompleted']),
             'rowsIncomeCategory' => $rowsIncomeCategory
-        ]);
-        unset($_SESSION['savingTransactionCompleted']);     
+        ]); 
     }
 
     public function addAction()
@@ -24,8 +24,11 @@ class Income extends Authenticated
         if ((isset($_POST['amount']))&&(!empty($_POST['amount']))) 
         {
             IncomeModel::addNewIncome($_SESSION['userId'], $_POST['category'], $_POST['amount'], $_POST['date'], $_POST['comment']);
-            $_SESSION['savingTransactionCompleted'] = true;
+            Flash::addMessage('savingTransactionResult' , 'You have successfully added new income!', Flash::SUCCESS);
 
+        } else {
+
+            Flash::addMessage('savingTransactionResult' , 'Error! Please fill in all required fields', Flash::WARNING);
         }
         $this->redirect('/income/index');
     }       

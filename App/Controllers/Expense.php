@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use \Core\View;
 use \App\Models\Expense as ExpenseModel;
+use \App\Flash;
 
 //Signin controller
 class Expense extends Authenticated
@@ -15,12 +16,9 @@ class Expense extends Authenticated
         $rowsPaymentMethod = ExpenseModel::getPaymentMethods($_SESSION['userId']);
 
         View::renderTemplate('Expense/index.html', [
-            'savingTransactionCompleted' => isset($_SESSION['savingTransactionCompleted']),
             'rowsExpenseCategory' => $rowsExpenseCategory,
             'rowsPaymentMethod' => $rowsPaymentMethod
         ]);
-        unset($_SESSION['savingTransactionCompleted']);
-
     }
 
     public function addAction()
@@ -28,9 +26,11 @@ class Expense extends Authenticated
         if ((isset($_POST['amount']))&&(!empty($_POST['amount']))) 
         {
             ExpenseModel::addNewExpense($_SESSION['userId'], $_POST['category'], $_POST['paymentMethod'], $_POST['amount'], $_POST['date'], $_POST['comment']);
-            $_SESSION['savingTransactionCompleted'] = true;
+            Flash::addMessage('savingTransactionResult' , 'You have successfully added new expense!', Flash::SUCCESS);
+        } else {
+
+            Flash::addMessage('savingTransactionResult' , 'Error! Please fill in all required fields', Flash::WARNING);
         }
-        
         $this->redirect('/expense/index');
     }       
 

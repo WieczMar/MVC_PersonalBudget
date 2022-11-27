@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use \Core\View;
 use \App\Models\User;
+use \App\Flash;
+
 //Signup controller
 class Signup extends \Core\Controller
 {
@@ -18,14 +20,7 @@ class Signup extends \Core\Controller
     //Show the index page
     public function indexAction()
     {
-        if(!isset($_SESSION['user'])) $_SESSION['user'] = "";
-
-        View::renderTemplate('Signup/index.html', [
-            'registrationCompleted' => isset($_SESSION['registrationCompleted']),
-            'user' => $_SESSION['user']
-        ]);
-        unset($_SESSION['registrationCompleted']);
-        unset($_SESSION['user']);
+        View::renderTemplate('Signup/index.html');
     }
 
     public function addAction()
@@ -37,17 +32,15 @@ class Signup extends \Core\Controller
             if ($user->saveNewUser()) {
     
                 //Mail::sendSignupConfirmation($this->$name, $this->$email);
-                $_SESSION['registrationCompleted'] = true;
+                Flash::addMessage('registrationCompleted' , 'You have successfully signed up!', Flash::SUCCESS);
                 $this->redirect('/signup/index');
                 exit();
     
             } else {
-                $_SESSION['user'] = $user;
-                $this->redirect('/signup/index');
+                Flash::addMessage('user' , $user, Flash::WARNING);
             }
-        } else{
-            $this->redirect('/signup/index');
-        }
+        } 
+        $this->redirect('/signup/index');
     }
 
 }

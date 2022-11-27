@@ -83,9 +83,9 @@
 <div class="container">
   <div class="row justify-content-center align-items-center">
       <div class="col-10 col-md-8 col-lg-6 col-xl-5 panel">
-          {% if savingTransactionCompleted %}
-          <div class="d-flex justify-content-center" style="color:green; padding-top:20px">You have successfully added new expense!</div>
-          {% endif %}
+        {% if flashMessages.savingTransactionResult %}
+        <div class="d-flex justify-content-center flash-message flash-message-{{flashMessages.savingTransactionResult.type}}">{{flashMessages.savingTransactionResult.body}}</div>
+        {% endif %}
           <div class="text-center panel-title">Add expense</div>
           <form action="/expense/add" method="post">
               <div class="form-group input-data">

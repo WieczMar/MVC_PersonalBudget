@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use \Core\View;
 use \App\Models\Balance as BalanceModel;
+use \App\Flash;
 
 //Signin controller
 class Balance extends Authenticated
@@ -29,7 +30,6 @@ class Balance extends Authenticated
         $balance = number_format($sumOfIncomes - $sumOfExpenses, 2,  '.', '');
         
         View::renderTemplate('Balance/index.html', [
-            'wrongDateRange' => isset($_SESSION['wrongDateRange']),
             'periods' => $periods,
             'selectedPeriod' => $selectedPeriod,
             'rowsIncomes' => $rowsIncomes,
@@ -37,9 +37,7 @@ class Balance extends Authenticated
             'sumOfIncomes' => $sumOfIncomes,
             'sumOfExpenses' =>  $sumOfExpenses,
             'balance' => $balance
-        ]);
-
-        unset($_SESSION['wrongDateRange']);  
+        ]);  
     }
 
     private static function getDateRange($selectedPeriod)
@@ -64,7 +62,7 @@ class Balance extends Authenticated
             case 'Nonstandard':
                 $startDate = $_POST['startDate'];
                 $endDate = $_POST['endDate'];
-                if($startDate > $endDate) $_SESSION['wrongDateRange'] = true;
+                if($startDate > $endDate) Flash::addMessage('incorrectDateRange' , 'Error! Selected incorrect date range!', Flash::WARNING);
                 break;
         }
 
