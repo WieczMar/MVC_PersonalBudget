@@ -23,13 +23,18 @@ class Income extends Authenticated
     {
         if ((isset($_POST['amount']))&&(!empty($_POST['amount']))) 
         {
-            IncomeModel::addNewIncome($_SESSION['userId'], $_POST['category'], $_POST['amount'], $_POST['date'], $_POST['comment']);
-            Flash::addMessage('savingTransactionResult' , 'You have successfully added new income!', Flash::SUCCESS);
+            $income = new IncomeModel($_POST);
+
+            if($income->addNewIncome($_SESSION['userId'])){
+
+                Flash::addMessage('savingTransactionResult' , 'You have successfully added new income!', Flash::SUCCESS);
+            }      
 
         } else {
 
             Flash::addMessage('savingTransactionResult' , 'Error! Please fill in all required fields', Flash::WARNING);
         }
+        
         $this->redirect('/income/index');
     }       
 

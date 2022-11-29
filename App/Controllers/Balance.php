@@ -3,28 +3,34 @@
 namespace App\Controllers;
 
 use \Core\View;
-use \App\Models\Balance as BalanceModel;
+use \App\Models\Expense;
+use \App\Models\Income;
 use \App\Flash;
 
 //Signin controller
 class Balance extends Authenticated
 {
+    const CURRENT_MONTH = 'Current month';
+    const PREVIOUS_MONTH = 'Previous month';
+    const CURRENT_YEAR = 'Current year';
+    const NONSTANDARD = 'Nonstandard';
+
     public function indexAction()
     {
-        if (!isset($_POST['selectedPeriod'])) $selectedPeriod = "Current month"; // first entry on balance page after logging
+        if (!isset($_POST['selectedPeriod'])) $selectedPeriod = self::CURRENT_MONTH; // first entry on balance page after logging
         else $selectedPeriod = $_POST['selectedPeriod'];
 
-        $periods = array('Current month', 'Previous month', 'Current year', 'Nonstandard');
+        $periods = array(self::CURRENT_MONTH, self::PREVIOUS_MONTH, self::CURRENT_YEAR, self::NONSTANDARD);
 
         // get date range
         list($startDate, $endDate) = self::getDateRange($selectedPeriod);
 
         // get incomes data from database
-        $rowsIncomes = BalanceModel::getIncomes($_SESSION['userId'], $startDate, $endDate);
+        $rowsIncomes = Income::getIncomes($_SESSION['userId'], $startDate, $endDate);
         list($rowsIncomes, $sumOfIncomes) = self::formatAndAggregateBudgetData($rowsIncomes);
 
         // get expenses data from database
-        $rowsExpenses = BalanceModel::getExpenses($_SESSION['userId'], $startDate, $endDate);
+        $rowsExpenses = Expense::getExpenses($_SESSION['userId'], $startDate, $endDate);
         list($rowsExpenses, $sumOfExpenses) = self::formatAndAggregateBudgetData($rowsExpenses);
         
         $balance = number_format($sumOfIncomes - $sumOfExpenses, 2,  '.', '');
@@ -47,19 +53,19 @@ class Balance extends Authenticated
         $previousMonth = sprintf("%02d", $currentMonth-1);
 
         switch ($selectedPeriod) {
-            case 'Current month':
+            case self::CURRENT_MONTH:
                 $startDate = $currentYear.'-'.$currentMonth.'-01';
                 $endDate = $currentYear.'-'.$currentMonth.'-'.cal_days_in_month(CAL_GREGORIAN,$currentMonth,$currentYear);
                 break;
-            case 'Previous month':
+            case self::PREVIOUS_MONTH:
                 $startDate = $currentYear.'-'.$previousMonth.'-01';
                 $endDate = $currentYear.'-'.$previousMonth.'-'.cal_days_in_month(CAL_GREGORIAN,$previousMonth,$currentYear);
                 break;
-            case 'Current year':
+            case self::CURRENT_YEAR:
                 $startDate = $currentYear.'-01-01';
                 $endDate = $currentYear.'-12-31';
                 break;
-            case 'Nonstandard':
+            case self::NONSTANDARD:
                 $startDate = $_POST['startDate'];
                 $endDate = $_POST['endDate'];
                 if($startDate > $endDate) Flash::addMessage('incorrectDateRange' , 'Error! Selected incorrect date range!', Flash::WARNING);

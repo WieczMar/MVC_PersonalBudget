@@ -33,8 +33,6 @@ class Signup extends \Core\Controller
     
                 //Mail::sendSignupConfirmation($this->$name, $this->$email);
                 Flash::addMessage('registrationCompleted' , 'You have successfully signed up!', Flash::SUCCESS);
-                $this->redirect('/signup/index');
-                exit();
     
             } else {
                 Flash::addMessage('user' , $user, Flash::WARNING);

@@ -25,8 +25,13 @@ class Expense extends Authenticated
     {
         if ((isset($_POST['amount']))&&(!empty($_POST['amount']))) 
         {
-            ExpenseModel::addNewExpense($_SESSION['userId'], $_POST['category'], $_POST['paymentMethod'], $_POST['amount'], $_POST['date'], $_POST['comment']);
-            Flash::addMessage('savingTransactionResult' , 'You have successfully added new expense!', Flash::SUCCESS);
+            $expense = new ExpenseModel($_POST);
+
+            if($expense->addNewExpense($_SESSION['userId'])){
+
+                Flash::addMessage('savingTransactionResult' , 'You have successfully added new expense!', Flash::SUCCESS);
+            }
+
         } else {
 
             Flash::addMessage('savingTransactionResult' , 'Error! Please fill in all required fields', Flash::WARNING);
