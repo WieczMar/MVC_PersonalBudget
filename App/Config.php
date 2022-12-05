@@ -35,4 +35,6 @@ class Config
      * @var boolean
      */
     const SHOW_ERRORS = true;
+
+    const SECRET_KEY = '29684DB23FD15C7DD6BE414F97FCA';
 }
