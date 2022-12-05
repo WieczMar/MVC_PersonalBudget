@@ -31,9 +31,11 @@ class Signin extends \Core\Controller
             if(!isset($_SESSION['email'])) $_SESSION['email'] = "";
             
             View::renderTemplate('Signin/index.html', [
-                'email' => $_SESSION['email']
+                'email' => $_SESSION['email'],
+                'rememberMe' => isset($_SESSION['rememberMe'])
             ]);
             unset($_SESSION['email']);
+            unset($_SESSION['rememberMe']);
         }
     }
 
@@ -43,16 +45,18 @@ class Signin extends \Core\Controller
         if(isset($_POST['email']))
         {
             $user = User::authenticate($_POST['email'], $_POST['password']);
+            $rememberMe = isset($_POST['rememberMe']);
 
-             if ($user) 
-             {
-                Auth::login($user);
+            if ($user) 
+            {
+                Auth::login($user, $rememberMe);
 
                 $this->redirect(Auth::getReturnToPage());
                 exit();
 
             } else {
                 $_SESSION['email'] = $_POST['email'];
+                if($rememberMe) $_SESSION['rememberMe'] = true;
             }   
         } 
         Flash::addMessage('loginError' , 'Wrong email or password!', Flash::WARNING);

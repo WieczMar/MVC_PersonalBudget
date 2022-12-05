@@ -4,6 +4,7 @@ namespace App\Models;
 
 use PDO;
 use \App\Flash;
+use \App\Token;
 
 class User extends \Core\Model
 {
@@ -36,14 +37,14 @@ class User extends \Core\Model
         $sql = 'SELECT * FROM users WHERE id = :id';
 
         $db = static::getDB();
-        $stmt = $db->prepare($sql);
-        $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
+        $statement = $db->prepare($sql);
+        $statement->bindValue(':id', $userId, PDO::PARAM_INT);
 
-        $stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+        $statement->setFetchMode(PDO::FETCH_CLASS, get_called_class());
 
-        $stmt->execute();
+        $statement->execute();
 
-        return $stmt->fetch();
+        return $statement->fetch();
     }
 
     public function saveNewUser()
@@ -86,10 +87,12 @@ class User extends \Core\Model
             $db = static::getDB();
             $statement = $db->prepare("SELECT * FROM users WHERE email=:email");
             $statement->bindValue(':email', $email, PDO::PARAM_STR);
-            $statement->execute();
-            $user = $statement->fetchObject();
 
-            return $user;
+            $statement->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+
+            $statement->execute();
+    
+            return $statement->fetch();
 
         } catch (PDOException $e) {
             echo $e->getMessage();
@@ -207,4 +210,27 @@ class User extends \Core\Model
             $this->errors['recaptcha'] = 'reCaptcha Error!';
         }	
     }
+
+    // Remember the login by inserting a new unique token into the remembered_logins table for this user record
+    public function rememberLogin()
+    {
+        $token = new Token();
+        $token_hash = $token->getHash();
+        $this->rememberToken = $token->getValue();
+
+        $this->expiryTimestamp = time() + 60 * 60 * 24 * 30;  // 30 days from now
+
+        $sql = 'INSERT INTO remembered_logins (token_hash, user_id, expires_at)
+                VALUES (:token_hash, :user_id, :expires_at)';
+
+        $db = static::getDB();
+        $statement = $db->prepare($sql);
+
+        $statement->bindValue(':token_hash', $token_hash, PDO::PARAM_STR);
+        $statement->bindValue(':user_id', $this->id, PDO::PARAM_INT);
+        $statement->bindValue(':expires_at', date('Y-m-d H:i:s', $this->expiryTimestamp), PDO::PARAM_STR);
+
+        return $statement->execute();
+    }
+    
 }
