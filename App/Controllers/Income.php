@@ -4,48 +4,38 @@ namespace App\Controllers;
 
 use \Core\View;
 use \App\Models\Income as IncomeModel;
+use \App\Flash;
+
 //Signin controller
-class Income extends \Core\Controller
+class Income extends Authenticated
 {
-    //Before filter
-    protected function before()
-    {
-        session_start();
-    }
-
-    //After filter
-    protected function after()
-    {
-    }
-
     //Show the index page
     public function indexAction()
     {
-        if ((isset($_SESSION['loggedIn']))&&($_SESSION['loggedIn']==true))
-        {
-            $rowsIncomeCategory = IncomeModel::getIncomeCategories($_SESSION['userId']);
+        $rowsIncomeCategory = IncomeModel::getIncomeCategories($_SESSION['userId']);
 
-            View::renderTemplate('Income/index.html', [
-                'savingTransactionCompleted' => isset($_SESSION['savingTransactionCompleted']),
-                'rowsIncomeCategory' => $rowsIncomeCategory
-            ]);
-            unset($_SESSION['savingTransactionCompleted']);
-        }
-        else{           
-            header('Location: /home/index');
-        }
-        
+        View::renderTemplate('Income/index.html', [
+            'rowsIncomeCategory' => $rowsIncomeCategory
+        ]); 
     }
 
     public function addAction()
     {
         if ((isset($_POST['amount']))&&(!empty($_POST['amount']))) 
         {
-            IncomeModel::addNewIncome($_SESSION['userId'], $_POST['category'], $_POST['amount'], $_POST['date'], $_POST['comment']);
-            $_SESSION['savingTransactionCompleted'] = true;
+            $income = new IncomeModel($_POST);
 
+            if($income->addNewIncome($_SESSION['userId'])){
+
+                Flash::addMessage('savingTransactionResult' , 'You have successfully added new income!', Flash::SUCCESS);
+            }      
+
+        } else {
+
+            Flash::addMessage('savingTransactionResult' , 'Error! Please fill in all required fields', Flash::WARNING);
         }
-        header('Location: /income/index');
+        
+        $this->redirect('/income/index');
     }       
 
 }

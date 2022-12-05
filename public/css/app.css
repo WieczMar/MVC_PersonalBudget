@@ -131,9 +131,23 @@ a:hover{
     border-bottom-right-radius: 0.25rem;
 }
 
-.incorrect-validation-text{
+.flash-message {
+    padding-top:20px;
+}
+.flash-message-info {
+    color: #0077b6;
+}
+.flash-message-success {
+    color: green;
+}
+.flash-message-warning {
+    color: red;
+}
+
+.flash-validation-message{
     color: red;
     padding-top: 2px;
     font-weight: 400;
     font-size: small;
 }
+

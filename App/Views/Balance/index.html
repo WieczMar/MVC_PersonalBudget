@@ -86,7 +86,7 @@
             <div class="form-group input-data">
                 <form id="periodForm" method="post">
                     <label for="selectedPeriod" class="form-label">Select period</label>
-                    <select class="form-select" name="selectedPeriod" onchange="js\view_balance.js" aria-label="period" id="selectedPeriod" >
+                    <select class="form-select" name="selectedPeriod" aria-label="period" id="selectedPeriod" >
                         {% for period in periods %}
                             {% if period == selectedPeriod %}
                             <option value="{{period}}" selected>{{period}}</option>
@@ -95,8 +95,8 @@
                             {% endif %}
                         {% endfor %}
                     </select>
-                    {% if wrongDateRange %}
-                    <div class="incorrect-validation-text" style="text-align: center;">Selected incorrect date range!</div>
+                    {% if flashMessages.incorrectDateRange %}
+                    <div class="flash-validation-message">{{flashMessages.incorrectDateRange.body}}</div>
                     {% endif %}
                 </form>
                 

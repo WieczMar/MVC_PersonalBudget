@@ -4,49 +4,39 @@ namespace App\Controllers;
 
 use \Core\View;
 use \App\Models\Expense as ExpenseModel;
+use \App\Flash;
+
 //Signin controller
-class Expense extends \Core\Controller
+class Expense extends Authenticated
 {
-    //Before filter
-    protected function before()
-    {
-        session_start();
-    }
-
-    //After filter
-    protected function after()
-    {
-    }
-
     //Show the index page
     public function indexAction()
     {
-        if ((isset($_SESSION['loggedIn']))&&($_SESSION['loggedIn']==true))
-        {
-            $rowsExpenseCategory = ExpenseModel::getExpenseCategories($_SESSION['userId']);
-            $rowsPaymentMethod = ExpenseModel::getPaymentMethods($_SESSION['userId']);
+        $rowsExpenseCategory = ExpenseModel::getExpenseCategories($_SESSION['userId']);
+        $rowsPaymentMethod = ExpenseModel::getPaymentMethods($_SESSION['userId']);
 
-            View::renderTemplate('Expense/index.html', [
-                'savingTransactionCompleted' => isset($_SESSION['savingTransactionCompleted']),
-                'rowsExpenseCategory' => $rowsExpenseCategory,
-                'rowsPaymentMethod' => $rowsPaymentMethod
-            ]);
-            unset($_SESSION['savingTransactionCompleted']);
-        }
-        else{           
-            header('Location: /home/index');
-        }
+        View::renderTemplate('Expense/index.html', [
+            'rowsExpenseCategory' => $rowsExpenseCategory,
+            'rowsPaymentMethod' => $rowsPaymentMethod
+        ]);
     }
 
     public function addAction()
     {
         if ((isset($_POST['amount']))&&(!empty($_POST['amount']))) 
         {
-            ExpenseModel::addNewExpense($_SESSION['userId'], $_POST['category'], $_POST['paymentMethod'], $_POST['amount'], $_POST['date'], $_POST['comment']);
-            $_SESSION['savingTransactionCompleted'] = true;
+            $expense = new ExpenseModel($_POST);
 
+            if($expense->addNewExpense($_SESSION['userId'])){
+
+                Flash::addMessage('savingTransactionResult' , 'You have successfully added new expense!', Flash::SUCCESS);
+            }
+
+        } else {
+
+            Flash::addMessage('savingTransactionResult' , 'Error! Please fill in all required fields', Flash::WARNING);
         }
-        header('Location: /expense/index');
+        $this->redirect('/expense/index');
     }       
 
 }
