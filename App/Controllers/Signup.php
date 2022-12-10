@@ -31,7 +31,7 @@ class Signup extends \Core\Controller
     
             if ($user->saveNewUser()) {
     
-                //Mail::sendSignupConfirmation($this->$name, $this->$email);
+                //$user->sendSignupConfirmation();
                 Flash::addMessage('registrationCompleted' , 'You have successfully signed up!', Flash::SUCCESS);
     
             } else {

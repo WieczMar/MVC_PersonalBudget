@@ -5,6 +5,8 @@ namespace App\Models;
 use PDO;
 use \App\Flash;
 use \App\Token;
+use \App\Mail;
+use \Core\View;
 
 class User extends \Core\Model
 {
@@ -231,6 +233,59 @@ class User extends \Core\Model
         $statement->bindValue(':expires_at', date('Y-m-d H:i:s', $this->expiryTimestamp), PDO::PARAM_STR);
 
         return $statement->execute();
+    }
+
+    
+    // Send password reset instructions to the user specified
+    public static function sendPasswordReset($email)
+    {
+        $user = static::getUserByEmail($email);
+
+        if ($user) {
+
+            if ($user->startPasswordReset()) {
+
+                $user->sendPasswordResetEmail();
+
+            }
+        }
+    }
+
+    // Start the password reset process by generating a new token and expiry
+    protected function startPasswordReset()
+    {
+        $token = new Token();
+        $hashed_token = $token->getHash();
+        $this->password_reset_token = $token->getValue();
+
+        $expiry_timestamp = time() + 60 * 60 * 1;  // 1 hour from now
+
+        $sql = 'UPDATE users
+                SET password_reset = :token_hash,
+                    password_reset_expires_at = :expires_at
+                WHERE id = :id';
+
+        $db = static::getDB();
+        $statement = $db->prepare($sql);
+
+        $statement->bindValue(':token_hash', $hashed_token, PDO::PARAM_STR);
+        $statement->bindValue(':expires_at', date('Y-m-d H:i:s', $expiry_timestamp), PDO::PARAM_STR);
+        $statement->bindValue(':id', $this->id, PDO::PARAM_INT);
+
+        return $statement->execute();
+    }
+
+    // Send password reset instructions in an email to the user
+    protected function sendPasswordResetEmail()
+    {
+        $url = 'http://' . $_SERVER['HTTP_HOST'] . '/password/reset/' . $this->password_reset_token;
+
+        $htmlMessage = View::getTemplate('Password/resetPasswordEmail.html', [
+            'name' => $this->email, 
+            'url' => $url]);
+        //$html = View::getTemplate('Password/reset_email.html', ['url' => $url]);
+
+        Mail::sendResetPasswordRequest($this->email, 'Personal Budget - Reset Password Request !', $htmlMessage);
     }
     
 }

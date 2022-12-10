@@ -77,9 +77,8 @@ li svg{
 
 .already-registered{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
-    white-space: pre;
     padding-top: 10px;
     margin: 5% 20%;
     font-size: 0.9rem;
