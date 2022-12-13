@@ -5,6 +5,8 @@ namespace App\Models;
 use PDO;
 use \App\Flash;
 use \App\Token;
+use \App\Mail;
+use \Core\View;
 
 class User extends \Core\Model
 {
@@ -231,6 +233,117 @@ class User extends \Core\Model
         $statement->bindValue(':expires_at', date('Y-m-d H:i:s', $this->expiryTimestamp), PDO::PARAM_STR);
 
         return $statement->execute();
+    }
+
+    
+    // Send password reset instructions to the user specified
+    public static function sendPasswordReset($email)
+    {
+        $user = static::getUserByEmail($email);
+
+        if ($user) {
+
+            if ($user->startPasswordReset()) {
+
+                $user->sendPasswordResetEmail();
+
+            }
+        }
+    }
+
+    // Start the password reset process by generating a new token and expiry
+    protected function startPasswordReset()
+    {
+        $token = new Token();
+        $hashed_token = $token->getHash();
+        $this->password_reset_token = $token->getValue();
+
+        $expiry_timestamp = time() + 60 * 60 * 2;  // 1 hour from now
+
+        $sql = 'UPDATE users
+                SET password_reset = :token_hash,
+                    password_reset_expires_at = :expires_at
+                WHERE id = :id';
+
+        $db = static::getDB();
+        $statement = $db->prepare($sql);
+
+        $statement->bindValue(':token_hash', $hashed_token, PDO::PARAM_STR);
+        $statement->bindValue(':expires_at', date('Y-m-d H:i:s', $expiry_timestamp), PDO::PARAM_STR);
+        $statement->bindValue(':id', $this->id, PDO::PARAM_INT);
+
+        return $statement->execute();
+    }
+
+    // Send password reset instructions in an email to the user
+    protected function sendPasswordResetEmail()
+    {
+        $url = 'http://' . $_SERVER['HTTP_HOST'] . '/password/reset/' . $this->password_reset_token;
+
+        $htmlMessage = View::getTemplate('Password/resetPasswordEmail.html', [
+            'name' => $this->email, 
+            'url' => $url]);
+
+        Mail::sendResetPasswordRequest($this->email, 'Personal Budget - Reset Password Request !', $htmlMessage);
+    }
+
+    //  Find a user model by password reset token and expiry
+    public static function findByPasswordReset($token)
+    {
+        $token = new Token($token);
+        $hashed_token = $token->getHash();
+
+        $sql = 'SELECT * FROM users
+                WHERE password_reset = :token_hash';
+
+        $db = static::getDB();
+        $statement = $db->prepare($sql);
+
+        $statement->bindValue(':token_hash', $hashed_token, PDO::PARAM_STR);
+
+        $statement->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+
+        $statement->execute();
+
+        $user = $statement->fetch();
+
+        if ($user) {
+
+            // Check password reset token hasn't expired
+            if (strtotime($user->password_reset_expires_at) > time()) {
+
+                return $user;
+            }
+        }
+    }
+
+    //  Reset the password
+    public function resetPassword($password)
+    {
+        $this->password = $password;
+
+        $this->validatePassword();
+
+        if (empty($this->errors)) {
+
+            $password_hash = password_hash($this->password, PASSWORD_DEFAULT);
+
+            $sql = 'UPDATE users
+                    SET password = :password_hash,
+                        password_reset = NULL,
+                        password_reset_expires_at = NULL
+                    WHERE id = :id';
+
+            $db = static::getDB();
+            $statement = $db->prepare($sql);
+
+            $statement->bindValue(':id', $this->id, PDO::PARAM_INT);
+            $statement->bindValue(':password_hash', $password_hash, PDO::PARAM_STR);
+
+            return $statement->execute();
+        }
+
+        return false;
     }
     
 }
