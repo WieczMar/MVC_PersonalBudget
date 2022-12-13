@@ -32,6 +32,7 @@ class Password extends \Core\Controller
         }
     }
 
+    // Send email with reset link with token
     public function requestReset()
     {
         if(isset($_POST['email']))
@@ -41,5 +42,54 @@ class Password extends \Core\Controller
         }
         $this->redirect('/password/index');
 
+    }
+
+    // Show the reset password form
+    public function resetAction()
+    {
+        $token = $this->route_params['token'];
+
+        $user = $this->getUserOrExit($token);
+
+        View::renderTemplate('Password/resetPassword.html', [
+            'token' => $token
+        ]);
+    }
+
+    // Reset the user's password
+    public function resetPasswordAction()
+    {
+        $token = $_POST['token'];
+
+        $user = $this->getUserOrExit($token);
+
+        if ($user->resetPassword($_POST['password'])) {
+
+            View::renderTemplate('Password/resetSuccess.html');
+
+        } else {
+            
+            Flash::addMessage('user' , $user, Flash::WARNING);
+            View::renderTemplate('Password/resetPassword.html', [
+                'token' => $token
+            ]);
+        }
+    }
+
+    // Find the user model associated with the password reset token, or end the request with a message
+    protected function getUserOrExit($token)
+    {
+        $user = User::findByPasswordReset($token);
+
+        if ($user) {
+
+            return $user;
+
+        } else {
+
+            View::renderTemplate('Password/tokenExpired.html');
+            exit;
+
+        }
     }
 }
