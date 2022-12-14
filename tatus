@@ -1,0 +1,30 @@
+*   [33mb452940[m[33m ([m[1;36mHEAD -> [m[1;32mfeature_signup_email_confirmation[m[33m, [m[1;32mmain[m[33m)[m Merge branch 'feature_reset_password'
+[31m|[m[32m\[m  
+[31m|[m * [33m1113015[m[33m ([m[1;32mfeature_reset_password[m[33m)[m Reset password feature
+[31m|[m * [33m0cd09e2[m Ignore config.php
+[31m|[m * [33m42a8d6e[m Send reset password email
+[31m|[m[31m/[m  
+*   [33m1c6c1b8[m[33m ([m[1;31morigin/main[m[33m)[m Merge branch 'Token'
+[33m|[m[34m\[m  
+[33m|[m * [33mbb8376e[m Token rememberMe option
+* [34m|[m [33m5d2074a[m Merge branch 'Refactoring'
+[35m|[m[34m\[m[34m|[m 
+[35m|[m * [33mf5d24e9[m Expense and Income classes, delete balance model class
+[35m|[m * [33m8139893[m Flash class added, flash messaging refactoring
+[35m|[m * [33meedf67a[m Auth class and Authenticated controller added"
+[35m|[m * [33m5940de3[m Session and signin refactoring
+[35m|[m * [33m51d7ebf[m User Model class
+[35m|[m[35m/[m  
+*   [33m7b256fc[m Refatoring
+[1;31m|[m[1;32m\[m  
+[1;31m|[m * [33m1405f19[m Refactoring signup and balance controllers, delete sample post controller
+[1;31m|[m[1;31m/[m  
+*   [33m8d68407[m Merge branch 'feature_incomes_expenses_balance'
+[1;33m|[m[1;34m\[m  
+[1;33m|[m * [33m59db8f6[m Incomes, expenses and balance pages added
+[1;33m|[m[1;33m/[m  
+*   [33mbcdb89c[m Home,Register,Login
+[1;35m|[m[1;36m\[m  
+[1;35m|[m * [33mf3368a0[m Landing page, registration and login pages added
+[1;35m|[m[1;35m/[m  
+* [33mbdbcdd0[m Initial commit with MVC framework

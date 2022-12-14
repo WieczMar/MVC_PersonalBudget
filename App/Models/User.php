@@ -25,7 +25,7 @@ class User extends \Core\Model
     {
         $user = self::getUserByEmail($email);
 
-        if ($user) {
+        if ($user && $user->is_active) {
             if (password_verify($password, $user->password)) {
                 return $user;
             }
@@ -57,16 +57,20 @@ class User extends \Core\Model
         $this->validateRecaptcha();
 
         if (empty($this->errors)) {
-            try {
-
-                $db = static::getDB();
 
                 $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT); // encrypt password (hash), PASSWORD_DEFAULT means use the best method currently known
                 
-                $statement = $db->prepare("INSERT INTO users VALUES (NULL, :name, :hashedPassword, :email)");
+                $token = new Token();
+                $hashed_token = $token->getHash();
+                $this->activation_token = $token->getValue();
+
+                $db = static::getDB();
+                $statement = $db->prepare("INSERT INTO users (username, password, email, activation) 
+                                            VALUES (:name, :hashedPassword, :email, :hashedActivation)");
                 $statement->bindValue(':name', $this->name, PDO::PARAM_STR);
                 $statement->bindValue(':hashedPassword', $hashedPassword, PDO::PARAM_STR);
                 $statement->bindValue(':email', $this->email, PDO::PARAM_STR);
+                $statement->bindValue(':hashedActivation', $hashed_token, PDO::PARAM_STR);
                 $result = $statement->execute();
 
                 $this->userId = $this->getUserId();
@@ -74,9 +78,6 @@ class User extends \Core\Model
 
                 return $result;
                 
-            } catch (PDOException $e) {
-                echo $e->getMessage();
-            }
         }
 
         return false;
@@ -281,10 +282,10 @@ class User extends \Core\Model
         $url = 'http://' . $_SERVER['HTTP_HOST'] . '/password/reset/' . $this->password_reset_token;
 
         $htmlMessage = View::getTemplate('Password/resetPasswordEmail.html', [
-            'name' => $this->email, 
+            'name' => $this->name, 
             'url' => $url]);
 
-        Mail::sendResetPasswordRequest($this->email, 'Personal Budget - Reset Password Request !', $htmlMessage);
+        Mail::send($this->email, 'Personal Budget - Reset Password Request !', $htmlMessage);
     }
 
     //  Find a user model by password reset token and expiry
@@ -326,10 +327,10 @@ class User extends \Core\Model
 
         if (empty($this->errors)) {
 
-            $password_hash = password_hash($this->password, PASSWORD_DEFAULT);
+            $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);
 
             $sql = 'UPDATE users
-                    SET password = :password_hash,
+                    SET password = :hashedPassword,
                         password_reset = NULL,
                         password_reset_expires_at = NULL
                     WHERE id = :id';
@@ -338,12 +339,43 @@ class User extends \Core\Model
             $statement = $db->prepare($sql);
 
             $statement->bindValue(':id', $this->id, PDO::PARAM_INT);
-            $statement->bindValue(':password_hash', $password_hash, PDO::PARAM_STR);
+            $statement->bindValue(':hashedPassword', $hashedPassword, PDO::PARAM_STR);
 
             return $statement->execute();
         }
 
         return false;
+    }
+
+    // Send an email to the user containing the activation link
+    public function sendActivationEmail()
+    {
+        $url = 'http://' . $_SERVER['HTTP_HOST'] . '/signup/activate/' . $this->activation_token;
+
+        $htmlMessage = View::getTemplate('Signup/activationEmail.html', [
+            'name' => $this->name, 
+            'url' => $url]);
+
+        Mail::send($this->email, 'Personal Budget - account activation', $htmlMessage);
+    }
+
+    // Activate the user account with the specified activation token
+    public static function activate($value)
+    {
+        $token = new Token($value);
+        $hashed_token = $token->getHash();
+
+        $sql = 'UPDATE users
+                SET is_active = 1,
+                    activation = null
+                WHERE activation = :hashed_token';
+
+        $db = static::getDB();
+        $statement = $db->prepare($sql);
+
+        $statement->bindValue(':hashed_token', $hashed_token, PDO::PARAM_STR);
+
+        $statement->execute();                
     }
     
 }
