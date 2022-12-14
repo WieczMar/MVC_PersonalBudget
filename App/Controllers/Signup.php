@@ -31,14 +31,29 @@ class Signup extends \Core\Controller
     
             if ($user->saveNewUser()) {
     
-                //$user->sendSignupConfirmation();
-                Flash::addMessage('registrationCompleted' , 'You have successfully signed up!', Flash::SUCCESS);
+                $user->sendActivationEmail();
+                Flash::addMessage('registrationCompleted' , 'You have successfully signed up! 
+                                    Please check your email to activate your account.', Flash::SUCCESS);
     
             } else {
                 Flash::addMessage('user' , $user, Flash::WARNING);
             }
         } 
         $this->redirect('/signup/index');
+    }
+
+    // Activate a new account
+    public function activateAction()
+    {
+        User::activate($this->route_params['token']);
+
+        $this->redirect('/signup/activated');        
+    }
+
+    // Show the activation success page
+    public function activatedAction()
+    {
+        View::renderTemplate('Signup/activationSuccess.html');
     }
 
 }
