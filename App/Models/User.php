@@ -85,81 +85,58 @@ class User extends \Core\Model
 
     private static function getUserByEmail($email)
     {
-        try {
+        $db = static::getDB();
+        $statement = $db->prepare("SELECT * FROM users WHERE email=:email");
+        $statement->bindValue(':email', $email, PDO::PARAM_STR);
 
-            $db = static::getDB();
-            $statement = $db->prepare("SELECT * FROM users WHERE email=:email");
-            $statement->bindValue(':email', $email, PDO::PARAM_STR);
+        $statement->setFetchMode(PDO::FETCH_CLASS, get_called_class());
 
-            $statement->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+        $statement->execute();
 
-            $statement->execute();
-    
-            return $statement->fetch();
-
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-        }
+        return $statement->fetch();
 
     }
 
     private function isEmailAlreadyUsed()
     {
-        try {
+        $db = static::getDB();
 
-            $db = static::getDB();
+        $statement = $db->prepare("SELECT id FROM users WHERE email=:email");
+        $statement->bindValue(':email', $this->email, PDO::PARAM_STR);
+        $statement->execute();
 
-            $statement = $db->prepare("SELECT id FROM users WHERE email=:email");
-            $statement->bindValue(':email', $this->email, PDO::PARAM_STR);
-            $statement->execute();
+        return $statement->fetch() !== false;
 
-            return $statement->fetch() !== false;
-
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-        }
     }
 
     private function getUserId()
     {
-        try {
+        $db = static::getDB();
 
-            $db = static::getDB();
+        $statement = $db->prepare("SELECT id FROM users WHERE email=:email");
+        $statement->bindValue(':email', $this->email, PDO::PARAM_STR);
+        $statement->execute();
 
-            $statement = $db->prepare("SELECT id FROM users WHERE email=:email");
-            $statement->bindValue(':email', $this->email, PDO::PARAM_STR);
-            $statement->execute();
+        $user = $statement->fetchObject();
 
-            $user = $statement->fetchObject();
-
-            return $user->id;
-
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-        }
+        return $user->id;
     }
 
     private function setUserDefaultBudgetOptions()
     {
-        try {
+        $db = static::getDB();
 
-            $db = static::getDB();
+        $statement = $db->prepare("INSERT INTO incomes_category_assigned_to_users (user_id, name) SELECT :userId, name FROM incomes_category_default");
+        $statement->bindValue(':userId', $this->userId, PDO::PARAM_INT);
+        $statement->execute();
 
-            $statement = $db->prepare("INSERT INTO incomes_category_assigned_to_users (user_id, name) SELECT :userId, name FROM incomes_category_default");
-            $statement->bindValue(':userId', $this->userId, PDO::PARAM_INT);
-            $statement->execute();
+        $statement = $db->prepare("INSERT INTO expenses_category_assigned_to_users (user_id, name) SELECT :userId, name FROM expenses_category_default");
+        $statement->bindValue(':userId', $this->userId, PDO::PARAM_INT);
+        $statement->execute();
 
-            $statement = $db->prepare("INSERT INTO expenses_category_assigned_to_users (user_id, name) SELECT :userId, name FROM expenses_category_default");
-            $statement->bindValue(':userId', $this->userId, PDO::PARAM_INT);
-            $statement->execute();
-
-            $statement = $db->prepare("INSERT INTO payment_methods_assigned_to_users (user_id, name) SELECT :userId, name FROM payment_methods_default");
-            $statement->bindValue(':userId', $this->userId, PDO::PARAM_INT);
-            $statement->execute();
-
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-        }
+        $statement = $db->prepare("INSERT INTO payment_methods_assigned_to_users (user_id, name) SELECT :userId, name FROM payment_methods_default");
+        $statement->bindValue(':userId', $this->userId, PDO::PARAM_INT);
+        $statement->execute();
     }
 
     private function validateName()

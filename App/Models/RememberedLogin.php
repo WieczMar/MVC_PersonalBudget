@@ -9,13 +9,7 @@ use \App\Token;
 class RememberedLogin extends \Core\Model
 {
 
-    /**
-     * Find a remembered login model by the token
-     *
-     * @param string $token The remembered login token
-     *
-     * @return mixed Remembered login object if found, false otherwise
-     */
+    //  Find a remembered login model by the token
     public static function findByToken($token)
     {
         $token = new Token($token);
@@ -35,31 +29,19 @@ class RememberedLogin extends \Core\Model
         return $statement->fetch();
     }
 
-    /**
-     * Get the user model associated with this remembered login
-     *
-     * @return User The user model
-     */
+    // Get the user model associated with this remembered login
     public function getUser()
     {
         return User::findByID($this->user_id);
     }
 
-    /**
-     * See if the remember token has expired or not, based on the current system time
-     *
-     * @return boolean True if the token has expired, false otherwise
-     */
+    // See if the remember token has expired or not, based on the current system time
     public function hasExpired()
     {
         return strtotime($this->expires_at) < time();
     }
 
-    /**
-     * Delete this model
-     *
-     * @return void
-     */
+    // Delete this model
     public function delete()
     {
         $sql = 'DELETE FROM remembered_logins
