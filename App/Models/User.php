@@ -259,10 +259,10 @@ class User extends \Core\Model
         $url = 'http://' . $_SERVER['HTTP_HOST'] . '/password/reset/' . $this->password_reset_token;
 
         $htmlMessage = View::getTemplate('Password/resetPasswordEmail.html', [
-            'name' => $this->name, 
+            'name' => $this->username, 
             'url' => $url]);
 
-        Mail::send($this->email, 'Personal Budget - Reset Password Request !', $htmlMessage);
+        Mail::send($this->email, 'Reset Password Request !', $htmlMessage);
     }
 
     //  Find a user model by password reset token and expiry
@@ -333,7 +333,7 @@ class User extends \Core\Model
             'name' => $this->name, 
             'url' => $url]);
 
-        Mail::send($this->email, 'Personal Budget - account activation', $htmlMessage);
+        Mail::send($this->email, 'Account activation', $htmlMessage);
     }
 
     // Activate the user account with the specified activation token

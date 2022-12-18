@@ -74,6 +74,9 @@
         {% if flashMessages.registrationCompleted %}
           <div class="d-flex justify-content-center flash-message flash-message-{{flashMessages.registrationCompleted.type}}">{{flashMessages.registrationCompleted.body}}</div>
         {% endif %}
+        {% if flashMessages.registrationCompleted %}
+          <div class="d-flex justify-content-center flash-message flash-message-{{flashMessages.registrationEmail.type}}">{{flashMessages.registrationEmail.body}}</div>
+        {% endif %}
         <div class="text-center panel-title">Create your account</div>
         <form id="registrationForm" method="post" action="/signup/add">
           <div class="form-group input-data">
