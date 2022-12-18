@@ -32,7 +32,7 @@ class RememberedLogin extends \Core\Model
     // Get the user model associated with this remembered login
     public function getUser()
     {
-        return User::findByID($this->user_id);
+        return User::getByID($this->user_id);
     }
 
     // See if the remember token has expired or not, based on the current system time

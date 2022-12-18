@@ -32,8 +32,8 @@ class Signup extends \Core\Controller
             if ($user->saveNewUser()) {
     
                 $user->sendActivationEmail();
-                Flash::addMessage('registrationCompleted' , 'You have successfully signed up! 
-                                    Please check your email to activate your account.', Flash::SUCCESS);
+                Flash::addMessage('registrationCompleted' , 'You have successfully signed up!', Flash::SUCCESS);
+                Flash::addMessage('registrationEmail' , 'Please check your email to activate your account.', Flash::SUCCESS);
     
             } else {
                 Flash::addMessage('user' , $user, Flash::WARNING);

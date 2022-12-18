@@ -1,2 +1,3 @@
 App/Config.php
 vendor
+App/Mail.php
