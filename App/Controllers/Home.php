@@ -18,7 +18,7 @@ class Home extends \Core\Controller
     //Show the index page
     public function indexAction()
     {
-        if (isset($_SESSION['userId']))
+        if (isset($_SESSION['userId'])) 
         {
             View::renderTemplate('Home/home.html');
         }
