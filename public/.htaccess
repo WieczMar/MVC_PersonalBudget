@@ -1,5 +1,8 @@
-# Remove the question mark from the request but maintain the query string
+# check if the connection is not using HTTPS, and if so, redirect to the same URL using HTTPS.
 RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# Remove the question mark from the request but maintain the query string
 RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
