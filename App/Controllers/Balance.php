@@ -50,7 +50,11 @@ class Balance extends Authenticated
     {
         $currentMonth = date('m');
         $currentYear = date('Y');
-        $previousMonth = sprintf("%02d", $currentMonth-1);
+        if($currentMonth == '01') {
+            $previousMonth = '12';
+        } else{
+            $previousMonth = sprintf("%02d", $currentMonth-1);
+        }
 
         switch ($selectedPeriod) {
             case self::CURRENT_MONTH:
@@ -58,8 +62,14 @@ class Balance extends Authenticated
                 $endDate = $currentYear.'-'.$currentMonth.'-'.cal_days_in_month(CAL_GREGORIAN,$currentMonth,$currentYear);
                 break;
             case self::PREVIOUS_MONTH:
-                $startDate = $currentYear.'-'.$previousMonth.'-01';
-                $endDate = $currentYear.'-'.$previousMonth.'-'.cal_days_in_month(CAL_GREGORIAN,$previousMonth,$currentYear);
+                if($currentMonth == '01') {
+                    $previousYear = $currentYear-1;
+                    $startDate = $previousYear.'-'.$previousMonth.'-01';
+                    $endDate = $previousYear.'-'.$previousMonth.'-'.cal_days_in_month(CAL_GREGORIAN,$previousMonth,$currentYear);
+                } else{
+                    $startDate = $currentYear.'-'.$previousMonth.'-01';
+                    $endDate = $currentYear.'-'.$previousMonth.'-'.cal_days_in_month(CAL_GREGORIAN,$previousMonth,$currentYear);
+                }
                 break;
             case self::CURRENT_YEAR:
                 $startDate = $currentYear.'-01-01';
