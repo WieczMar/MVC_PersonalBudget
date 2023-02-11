@@ -23,7 +23,7 @@ class Expense extends Authenticated
 
     public function addAction()
     {
-        if ((isset($_POST['amount']))&&(!empty($_POST['amount']))) 
+        if ((!empty($_POST['amount']))&&(!empty($_POST['paymentMethodId']))&&(!empty($_POST['categoryId']))) 
         {
             $expense = new ExpenseModel($_POST);
 
@@ -37,6 +37,21 @@ class Expense extends Authenticated
             Flash::addMessage('savingTransactionResult' , 'Error! Please fill in all required fields', Flash::WARNING);
         }
         $this->redirect('/expense/index');
-    }       
+    }      
+    
+    public function getLimitAction()
+    {
+        $categoryId = $this->route_params['id'];
 
+        echo json_encode(ExpenseModel::getUserExpenseMonthlyLimit($categoryId), JSON_UNESCAPED_UNICODE);
+    }
+    
+    public function getExpensesAction()
+    {
+        $categoryId = $this->route_params['id'];
+        $date = $_GET['date'];
+
+        echo json_encode(ExpenseModel::getSumOfExpensesInCategoryForSelectedMonth($categoryId, $date), JSON_UNESCAPED_UNICODE);
+
+    }
 }

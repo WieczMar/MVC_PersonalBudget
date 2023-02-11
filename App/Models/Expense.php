@@ -75,5 +75,45 @@ class Expense extends \Core\Model
             
     }
 
+    public static function getUserExpenseMonthlyLimit($categoryId)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT monthly_limit FROM expenses_category_assigned_to_users WHERE user_id = :userId AND id = :categoryId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+
+    public static function getSumOfExpensesInCategoryForSelectedMonth($categoryId, $date)
+    {
+        $userId = $_SESSION['userId'];
+        $month = date("m", strtotime($date));
+        $year = date("Y", strtotime($date));
+        $startDate = $year.'-'.$month.'-01';
+        $endDate = $year.'-'.$month.'-'.cal_days_in_month(CAL_GREGORIAN,$month,$year);
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT SUM(amount) AS categoryAmount FROM expenses 
+        WHERE expenses.user_id = :userId AND expenses.expense_category_assigned_to_user_id = :categoryId
+        AND expenses.date_of_expense BETWEEN :startDate AND :endDate");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $statement->bindValue(':startDate', $startDate, PDO::PARAM_STR);
+        $statement->bindValue(':endDate', $endDate, PDO::PARAM_STR);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+
+
+
 }
 

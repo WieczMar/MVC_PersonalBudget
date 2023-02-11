@@ -21,7 +21,7 @@ class Income extends Authenticated
 
     public function addAction()
     {
-        if ((isset($_POST['amount']))&&(!empty($_POST['amount']))) 
+        if ((!empty($_POST['amount']))&&(!empty($_POST['categoryId']))) 
         {
             $income = new IncomeModel($_POST);
 
