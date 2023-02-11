@@ -48,6 +48,10 @@ li svg{
     font-weight: 600;
 }
 
+.limit-data{
+    margin: 5%;
+}
+
 .button{
     background-color: #0077b6;
     border-color: #0077b6;
@@ -152,4 +156,8 @@ a:hover{
 
 .remember-signin-checkbox{
     margin: 5% 5% 5% 7%;
+}
+
+.collapsible{
+    display: none;
 }

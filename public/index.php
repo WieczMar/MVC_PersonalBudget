@@ -25,7 +25,9 @@ $router->add('{controller}', ['action' => 'index']);
 $router->add('{controller}/', ['action' => 'index']);
 $router->add('password/reset/{token:[\da-f]+}', ['controller' => 'Password', 'action' => 'reset']);
 $router->add('signup/activate/{token:[\da-f]+}', ['controller' => 'Signup', 'action' => 'activate']);
-//$router->add('{controller}/{id:\d+}/{action}');
+
+$router->add('api/expense-limit/{id:[\d]+}', ['controller' => 'Expense', 'action' => 'getLimit']);
+$router->add('api/expenses/{id:[\d]+}', ['controller' => 'Expense', 'action' => 'getExpenses']);
 //$router->add('admin/{controller}/{action}', ['namespace' => 'Admin']);
     
 $router->dispatch($_SERVER['QUERY_STRING']);
