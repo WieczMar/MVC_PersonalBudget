@@ -36,6 +36,21 @@ class Income extends Authenticated
         }
         
         $this->redirect('/income/index');
-    }       
+    }     
+    
+    public function getIncomeDetailsInCategoryForSelectedDatesAction()
+    {
+        $categoryId = $this->route_params['id'];
+        $startDate = $_GET['start-date'];
+        $endDate = $_GET['end-date'];
+        
+        echo json_encode(IncomeModel::getIncomeDetailsInCategoryForSelectedDates($categoryId, $startDate, $endDate), JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getIncomeCategoryNameAction()
+    {
+        $categoryId = $this->route_params['id'];      
+        echo json_encode(IncomeModel::getIncomeCategoryName($categoryId), JSON_UNESCAPED_UNICODE);
+    }
 
 }

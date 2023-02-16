@@ -39,14 +39,14 @@ class Expense extends Authenticated
         $this->redirect('/expense/index');
     }      
     
-    public function getLimitAction()
+    public function getLimitOfExpensesInCategoryAction()
     {
         $categoryId = $this->route_params['id'];
 
-        echo json_encode(ExpenseModel::getUserExpenseMonthlyLimit($categoryId), JSON_UNESCAPED_UNICODE);
+        echo json_encode(ExpenseModel::getLimitOfExpensesInCategory($categoryId), JSON_UNESCAPED_UNICODE);
     }
     
-    public function getExpensesAction()
+    public function getSumOfExpensesInCategoryForSelectedMonthAction()
     {
         $categoryId = $this->route_params['id'];
         $date = $_GET['date'];
@@ -54,4 +54,22 @@ class Expense extends Authenticated
         echo json_encode(ExpenseModel::getSumOfExpensesInCategoryForSelectedMonth($categoryId, $date), JSON_UNESCAPED_UNICODE);
 
     }
+
+    public function getExpenseDetailsInCategoryForSelectedDatesAction()
+    {
+        $categoryId = $this->route_params['id'];
+        $startDate = $_GET['start-date'];
+        $endDate = $_GET['end-date'];
+        
+        echo json_encode(ExpenseModel::getExpenseDetailsInCategoryForSelectedDates($categoryId, $startDate, $endDate), JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getExpenseCategoryNameAction()
+    {
+        $categoryId = $this->route_params['id'];      
+        echo json_encode(ExpenseModel::getExpenseCategoryName($categoryId), JSON_UNESCAPED_UNICODE);
+    }
+    
+
+
 }
