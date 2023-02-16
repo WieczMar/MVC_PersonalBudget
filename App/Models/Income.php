@@ -31,9 +31,9 @@ class Income extends \Core\Model
     {
         $db = static::getDB();
 
-        $statement = $db->prepare("SELECT name AS categoryName, SUM(amount) AS categoryAmount FROM incomes, incomes_category_assigned_to_users 
+        $statement = $db->prepare("SELECT incomes_category_assigned_to_users.id AS categoryId, name AS categoryName, SUM(amount) AS categoryAmount FROM incomes, incomes_category_assigned_to_users 
         WHERE incomes.user_id = :userId AND incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id 
-        AND incomes.date_of_income BETWEEN :startDate AND :endDate GROUP BY categoryName ORDER BY categoryAmount DESC");
+        AND incomes.date_of_income BETWEEN :startDate AND :endDate GROUP BY categoryName, incomes_category_assigned_to_users.id ORDER BY categoryAmount DESC");
         $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
         $statement->bindValue(':startDate', $startDate, PDO::PARAM_STR);
         $statement->bindValue(':endDate', $endDate, PDO::PARAM_STR);
@@ -59,5 +59,39 @@ class Income extends \Core\Model
         return $statement->execute();
             
     }
+
+    public static function getIncomeDetailsInCategoryForSelectedDates($categoryId, $startDate, $endDate)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT amount, date_of_income AS date, income_comment AS comment FROM incomes 
+        WHERE user_id = :userId AND income_category_assigned_to_user_id = :categoryId
+        AND date_of_income BETWEEN :startDate AND :endDate ORDER BY amount DESC");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $statement->bindValue(':startDate', $startDate, PDO::PARAM_STR);
+        $statement->bindValue(':endDate', $endDate, PDO::PARAM_STR);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function getIncomeCategoryName($categoryId)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT name FROM incomes_category_assigned_to_users 
+        WHERE user_id = :userId AND id = :categoryId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }
 

@@ -45,9 +45,9 @@ class Expense extends \Core\Model
     {
         $db = static::getDB();
 
-        $statement = $db->prepare("SELECT name AS categoryName, SUM(amount) AS categoryAmount FROM expenses, expenses_category_assigned_to_users 
+        $statement = $db->prepare("SELECT expenses_category_assigned_to_users.id AS categoryId, name AS categoryName, SUM(amount) AS categoryAmount FROM expenses, expenses_category_assigned_to_users 
         WHERE expenses.user_id = :userId AND expenses.expense_category_assigned_to_user_id=expenses_category_assigned_to_users.id 
-        AND expenses.date_of_expense BETWEEN :startDate AND :endDate GROUP BY categoryName ORDER BY categoryAmount DESC");
+        AND expenses.date_of_expense BETWEEN :startDate AND :endDate GROUP BY categoryName, expenses_category_assigned_to_users.id ORDER BY categoryAmount DESC");
         $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
         $statement->bindValue(':startDate', $startDate, PDO::PARAM_STR);
         $statement->bindValue(':endDate', $endDate, PDO::PARAM_STR);
@@ -75,7 +75,7 @@ class Expense extends \Core\Model
             
     }
 
-    public static function getUserExpenseMonthlyLimit($categoryId)
+    public static function getLimitOfExpensesInCategory($categoryId)
     {
         $userId = $_SESSION['userId'];
 
@@ -111,6 +111,39 @@ class Expense extends \Core\Model
 
         return $statement->fetchAll(PDO::FETCH_ASSOC);
 
+    }
+
+    public static function getExpenseDetailsInCategoryForSelectedDates($categoryId, $startDate, $endDate)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT amount, date_of_expense AS date, expense_comment AS comment FROM expenses 
+        WHERE user_id = :userId AND expense_category_assigned_to_user_id = :categoryId
+        AND date_of_expense BETWEEN :startDate AND :endDate ORDER BY amount DESC");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $statement->bindValue(':startDate', $startDate, PDO::PARAM_STR);
+        $statement->bindValue(':endDate', $endDate, PDO::PARAM_STR);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function getExpenseCategoryName($categoryId)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT name FROM expenses_category_assigned_to_users 
+        WHERE user_id = :userId AND id = :categoryId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
 

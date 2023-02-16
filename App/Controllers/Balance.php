@@ -42,7 +42,9 @@ class Balance extends Authenticated
             'rowsExpenses' => $rowsExpenses,
             'sumOfIncomes' => $sumOfIncomes,
             'sumOfExpenses' =>  $sumOfExpenses,
-            'balance' => $balance
+            'balance' => $balance,
+            'startDate' => $startDate,
+            'endDate' => $endDate
         ]);  
     }
 
@@ -92,7 +94,7 @@ class Balance extends Authenticated
             $sum = number_format(array_sum(array_column($rows, 'categoryAmount')), 2,  '.', ''); // aggregate amount with 2 digit precision
         }
         else { // null handling case
-            $rows = array(array('categoryName' => '-', 'categoryAmount' => '-'));
+            $rows = array(array('categoryId' => '-', 'categoryName' => '-', 'categoryAmount' => '-'));
             $sum = number_format(0, 2,  '.', '');
         }
 

@@ -15,15 +15,15 @@ const alreadySpentInMonthBanner = document.querySelector('#alreadySpentInMonthBa
 const collapsibleBanner = document.querySelector('#collapsibleBanner');
 
 // API GET method
-const getMonthlyLimitForCategory = (id) => {
+const getMonthlyLimitForCategory = async (id) => {
     return fetch(`http://localhost/api/expense-limit/${id}`)
         .then((response) => response.json())
         .then((data) => data[0].monthly_limit);
 }
 
 // API GET method
-const getSumOfExpensesInMonthForCategory = (id, date) => {
-    return fetch(`http://localhost/api/expenses/${id}?date=${date}`)
+const getSumOfExpensesInMonthForCategory = async (id, date) => {
+    return fetch(`http://localhost/api/expense-sum/${id}?date=${date}`)
         .then((response) => response.json())
         .then((data) => data[0].categoryAmount);
 }

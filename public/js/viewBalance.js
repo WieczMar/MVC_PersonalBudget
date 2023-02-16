@@ -1,4 +1,4 @@
-//Modal select nonstandard Date Range
+// Modal select nonstandard Date Range
 const dropDownList = document.querySelector('#selectedPeriod');
 const periodForm = document.querySelector('#periodForm');
 
@@ -30,7 +30,7 @@ for (let i = 1; i < incomesRowsLength; i++){
     incomeCategories.push(currentRowCells.item(0).innerHTML);
     incomeAmounts.push(currentRowCells.item(1).innerHTML);
 
-}
+};
 
 for (let j = 1; j < expensesRowsLength; j++){
 
@@ -38,9 +38,9 @@ for (let j = 1; j < expensesRowsLength; j++){
     expenseCategories.push(currentRowCells.item(0).innerHTML);
     expenseAmounts.push(currentRowCells.item(1).innerHTML);
   
-}
+};
 
-//draw pieCharts
+// Draw pieCharts
 let containerIncomesPieChart = document.querySelector("#incomesPieChart").getContext('2d');
 let incomesPieChart = new Chart(containerIncomesPieChart, {
   type: 'pie',
@@ -85,4 +85,97 @@ let expensesPieChart = new Chart(containerExpensesPieChart, {
         display: false
     }
   }
+});
+
+// Modal category details
+
+// API GET method
+const getIncomesForCategory = async (categoryId, startDate, endDate) => {
+  return fetch(`http://localhost/api/income-details/${categoryId}?start-date=${startDate}&end-date=${endDate}`)
+    .then((response) => response.json());
+};
+
+const getExpensesForCategory = async (categoryId, startDate, endDate) => {
+  return fetch(`http://localhost/api/expense-details/${categoryId}?start-date=${startDate}&end-date=${endDate}`)
+    .then((response) => response.json());
+};
+
+const getIncomeCategoryName = async (categoryId) => {
+  return fetch(`http://localhost/api/income-category-name/${categoryId}`)
+    .then((response) => response.json())
+    .then((data) => data[0].name);
+};
+
+const getExpenseCategoryName = async (categoryId) => {
+  return fetch(`http://localhost/api/expense-category-name/${categoryId}`)
+    .then((response) => response.json())
+    .then((data) => data[0].name);
+};
+
+const renderOnDOM = (categoryName, incomesOrExpensesInCategory) => {
+  detailsTableTitle.innerHTML = categoryName;
+  let tableBody = document.querySelector("#detailsTable tbody");
+
+  incomesOrExpensesInCategory.forEach(function(incomeOrExpense) {
+    let row = tableBody.insertRow();
+    let cell0 = row.insertCell(0);
+    let cell1 = row.insertCell(1);
+    let cell2 = row.insertCell(2);
+    cell0.innerHTML = incomeOrExpense.amount;
+    cell1.innerHTML = incomeOrExpense.date;
+    cell2.innerHTML = incomeOrExpense.comment;
+  });
+};
+
+const clearDetailsTable = () => {
+  let tableBody = document.querySelector("#detailsTable tbody");
+  let rows = tableBody.querySelectorAll("tr");
+
+  rows.forEach(function(row) {
+    row.remove();
+  });
+};
+
+const fillDetailsTableWithIncomes = async (categoryId, startDate, endDate) => {
+  let incomesInCategory = await getIncomesForCategory(categoryId, startDate, endDate);
+  let categoryName = await getIncomeCategoryName(categoryId);
+  renderOnDOM(categoryName, incomesInCategory);
+};
+
+const fillDetailsTableWithExpenses = async (categoryId, startDate, endDate) => {
+  let expensesInCategory = await getExpensesForCategory(categoryId, startDate, endDate);
+  let categoryName = await getExpenseCategoryName(categoryId);
+  renderOnDOM(categoryName, expensesInCategory);
+};
+
+const startDate = document.querySelector('#selectedStartDateValue').innerHTML;
+const endDate = document.querySelector('#selectedEndDateValue').innerHTML;
+const detailsTableTitle = document.querySelector('#categoryDetailsModalLabel');
+
+// Incomes buttons
+const incomeCategoryDetailsButtons = document.querySelectorAll('.incomeCategoryDetailsButton');
+incomeCategoryDetailsButtons.forEach(function(incomeCategoryDetailsButton) {
+  if (incomeCategoryDetailsButton.getAttribute("value") === "-") {
+    incomeCategoryDetailsButton.setAttribute("class", "collapsible");
+  } else {
+    incomeCategoryDetailsButton.addEventListener("click", function(event) {
+      clearDetailsTable();
+      const incomeCategoryId = event.target.value;
+      fillDetailsTableWithIncomes(incomeCategoryId, startDate, endDate);
+    });
+  };
+});
+
+// Expenses buttons
+const expenseCategoryDetailsButtons = document.querySelectorAll('.expenseCategoryDetailsButton');
+expenseCategoryDetailsButtons.forEach(function(expenseCategoryDetailsButton) {
+  if (expenseCategoryDetailsButton.getAttribute("value") === "-") {
+    expenseCategoryDetailsButton.setAttribute("class", "collapsible");
+  } else {
+    expenseCategoryDetailsButton.addEventListener("click", function(event) {
+      clearDetailsTable();
+      const expenseCategoryId = event.target.value;
+      fillDetailsTableWithExpenses(expenseCategoryId, startDate, endDate);
+    });
+  };
 });

@@ -99,7 +99,8 @@
                     <div class="flash-validation-message">{{flashMessages.incorrectDateRange.body}}</div>
                     {% endif %}
                 </form>
-                
+                <div class="d-none" id="selectedStartDateValue">{{startDate}}</div>
+                <div class="d-none" id="selectedEndDateValue">{{endDate}}</div>
             </div>
 
         </div>
@@ -118,7 +119,20 @@
                         </thead>
                         <tbody>
                             {% for income in rowsIncomes %}
-                            <tr><td>{{income.categoryName}}</td> <td>{{income.categoryAmount}}<td> </tr>
+                            <tr>
+                                <td>{{income.categoryName}}</td> 
+                                <td>{{income.categoryAmount}}</td> 
+                                <td class="d-flex justify-content-end"> 
+                                    &nbsp; <!-- Space for null handling case -->
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-outline-secondary incomeCategoryDetailsButton" data-bs-toggle="modal" data-bs-target="#categoryDetailsModal" value="{{income.categoryId}}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eyeglasses" viewBox="0 0 16 16" style="pointer-events: none;">
+                                            <path style="pointer-events: none;" d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -134,7 +148,20 @@
                         </thead>
                         <tbody>
                             {% for expense in rowsExpenses %}
-                            <tr><td>{{expense.categoryName}}</td> <td>{{expense.categoryAmount}}</td> </tr>
+                            <tr>
+                                <td>{{expense.categoryName}}</td> 
+                                <td>{{expense.categoryAmount}}</td>
+                                <td class="d-flex justify-content-end"> 
+                                    &nbsp; <!-- Space for null handling case -->
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-outline-secondary expenseCategoryDetailsButton" data-bs-toggle="modal" data-bs-target="#categoryDetailsModal" value="{{expense.categoryId}}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eyeglasses" viewBox="0 0 16 16" style="pointer-events: none;">
+                                            <path style="pointer-events: none;" d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -171,9 +198,9 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Nonstandard Date Range Modal -->
 <div class="modal fade" id="nonstandardDateRangeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog">
+<div class="modal-dialog modal-dialog-centered">
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title" id="exampleModalLabel">Select nonstandard period</h5>
@@ -215,6 +242,31 @@
     </form>
   </div>
 </div>
+</div>
+
+<!-- Category Details Modal -->
+<div class="modal fade" id="categoryDetailsModal" tabindex="-1" aria-labelledby="categoryDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="categoryDetailsModalLabel"></h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-striped table-hover" id="detailsTable">
+                <thead>
+                    <tr>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Comment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
