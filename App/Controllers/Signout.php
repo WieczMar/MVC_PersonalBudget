@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use \App\Auth;
 
-//Signout controller
+// Signout controller
 class Signout extends \Core\Controller
 {
     //Log out a user

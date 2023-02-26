@@ -7,7 +7,7 @@ use \App\Models\User;
 use \App\Auth;
 use \App\Flash;
 
-//Password controller
+// Password controller
 class Password extends \Core\Controller
 {
     //Before filter

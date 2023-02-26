@@ -66,7 +66,7 @@ class Income extends \Core\Model
 
         $db = static::getDB();
 
-        $statement = $db->prepare("SELECT amount, date_of_income AS date, income_comment AS comment FROM incomes 
+        $statement = $db->prepare("SELECT id, amount, date_of_income AS date, income_comment AS comment FROM incomes 
         WHERE user_id = :userId AND income_category_assigned_to_user_id = :categoryId
         AND date_of_income BETWEEN :startDate AND :endDate ORDER BY amount DESC");
         $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
@@ -92,6 +92,84 @@ class Income extends \Core\Model
 
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public static function editIncomeCategory($data)
+    {
+        $userId = $_SESSION['userId'];
+        $categoryId = $data->id;
+        $name = $data->name;
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("UPDATE incomes_category_assigned_to_users SET name = :name 
+        WHERE user_id = :userId AND id = :categoryId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $statement->bindValue(':name', $name, PDO::PARAM_STR);
+
+        return $statement->execute();
+    }
+
+    public static function getIncomeCategoryIdByName($name)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT id FROM incomes_category_assigned_to_users 
+        WHERE user_id = :userId AND name = :name");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':name', $name, PDO::PARAM_STR);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function addIncomeCategory($data)
+    {
+        $userId = $_SESSION['userId'];
+        $name = $data->name;
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("INSERT INTO incomes_category_assigned_to_users VALUES (NULL, :userId, :name)");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':name', $name, PDO::PARAM_STR);
+        
+        return $statement->execute();
+    }
+
+    public static function getIncomeDetailsInCategory($categoryId)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT amount, date_of_income AS date, income_comment AS comment FROM incomes 
+        WHERE user_id = :userId AND income_category_assigned_to_user_id = :categoryId ORDER BY amount DESC");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function deleteIncomeCategory($categoryId)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("DELETE FROM incomes_category_assigned_to_users WHERE user_id = :userId AND id = :categoryId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+
+        return $statement->execute();
+    }
+
+    
+
+    
 
 }
 
