@@ -6,7 +6,7 @@ use \Core\View;
 use \App\Models\User;
 use \App\Flash;
 
-//Signup controller
+// Signup controller
 class Signup extends \Core\Controller
 {
     //Before filter

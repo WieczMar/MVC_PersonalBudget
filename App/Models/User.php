@@ -166,7 +166,7 @@ class User extends \Core\Model
         }
     }
 
-    private function validatePassword()
+    public function validatePassword()
     {
         if ((strlen($this->password)<8) || (strlen($this->password)>30))
         {
@@ -278,18 +278,14 @@ class User extends \Core\Model
         $statement = $db->prepare($sql);
 
         $statement->bindValue(':token_hash', $hashed_token, PDO::PARAM_STR);
-
         $statement->setFetchMode(PDO::FETCH_CLASS, get_called_class());
-
         $statement->execute();
 
         $user = $statement->fetch();
 
         if ($user) {
-
             // Check password reset token hasn't expired
             if (strtotime($user->password_reset_expires_at) > time()) {
-
                 return $user;
             }
         }
@@ -354,5 +350,82 @@ class User extends \Core\Model
 
         $statement->execute();                
     }
+
+    public static function getUsername()
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT username FROM users WHERE id = :userId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function editUsername($name)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("UPDATE users SET username = :name WHERE id = :userId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':name', $name, PDO::PARAM_STR);
+
+        return $statement->execute();
+    }
+
+    public static function editPassword($newPassword)
+    {
+        $userId = $_SESSION['userId'];
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("UPDATE users SET password = :hashedPassword WHERE id = :userId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':hashedPassword', $hashedPassword, PDO::PARAM_STR);
+
+        return $statement->execute();
+    }
+
+    public static function deleteUser()
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("DELETE FROM users WHERE id = :userId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->execute();
+
+        $statement = $db->prepare("DELETE FROM expenses WHERE user_id = :userId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->execute();
+
+        $statement = $db->prepare("DELETE FROM expenses_category_assigned_to_users WHERE user_id = :userId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->execute();
+
+        $statement = $db->prepare("DELETE FROM incomes WHERE user_id = :userId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->execute();
+
+        $statement = $db->prepare("DELETE FROM incomes_category_assigned_to_users WHERE user_id = :userId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->execute();
+
+        $statement = $db->prepare("DELETE FROM payment_methods_assigned_to_users WHERE user_id = :userId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return true;
+    }
+
+    
+
+
     
 }

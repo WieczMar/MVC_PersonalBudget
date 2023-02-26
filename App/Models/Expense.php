@@ -17,7 +17,7 @@ class Expense extends \Core\Model
     {
         $db = static::getDB();
 
-        $statement = $db->prepare("SELECT id, name FROM expenses_category_assigned_to_users WHERE user_id = :userId");
+        $statement = $db->prepare("SELECT id, name, monthly_limit FROM expenses_category_assigned_to_users WHERE user_id = :userId");
         $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
         $statement->execute();
 
@@ -119,7 +119,7 @@ class Expense extends \Core\Model
 
         $db = static::getDB();
 
-        $statement = $db->prepare("SELECT amount, date_of_expense AS date, expense_comment AS comment FROM expenses 
+        $statement = $db->prepare("SELECT id, amount, date_of_expense AS date, expense_comment AS comment FROM expenses 
         WHERE user_id = :userId AND expense_category_assigned_to_user_id = :categoryId
         AND date_of_expense BETWEEN :startDate AND :endDate ORDER BY amount DESC");
         $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
@@ -145,6 +145,167 @@ class Expense extends \Core\Model
 
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public static function editExpenseCategory($data)
+    {
+        $userId = $_SESSION['userId'];
+        $categoryId = $data->id;
+        $name = $data->name;
+        if(isset($data->monthlyLimit)) {
+            $montlyLImit = $data->monthlyLimit;
+        } else {
+            $montlyLImit = null;
+        }
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("UPDATE expenses_category_assigned_to_users SET name = :name, monthly_limit = :monthlyLimit
+        WHERE user_id = :userId AND id = :categoryId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $statement->bindValue(':name', $name, PDO::PARAM_STR);
+        $statement->bindValue(':monthlyLimit', $montlyLImit, PDO::PARAM_INT);
+
+        return $statement->execute();
+    }
+
+    public static function editPaymentMethod($data)
+    {
+        $userId = $_SESSION['userId'];
+        $paymentMethodId = $data->id;
+        $name = $data->name;
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("UPDATE payment_methods_assigned_to_users SET name = :name
+        WHERE user_id = :userId AND id = :paymentMethodId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':paymentMethodId', $paymentMethodId, PDO::PARAM_INT);
+        $statement->bindValue(':name', $name, PDO::PARAM_STR);
+
+        return $statement->execute();
+    }
+
+    public static function addExpenseCategory($data)
+    {
+        $userId = $_SESSION['userId'];
+        $name = $data->name;
+        if(isset($data->monthlyLimit)) {
+            $montlyLImit = $data->monthlyLimit;
+        } else {
+            $montlyLImit = null;
+        }
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("INSERT INTO expenses_category_assigned_to_users VALUES (NULL, :userId, :name, :monthlyLimit)");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':name', $name, PDO::PARAM_STR);
+        $statement->bindValue(':monthlyLimit', $montlyLImit, PDO::PARAM_INT);
+        
+        return $statement->execute();
+    }
+
+    public static function getExpenseCategoryIdByName($name)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT id FROM expenses_category_assigned_to_users
+        WHERE user_id = :userId AND name = :name");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':name', $name, PDO::PARAM_STR);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public static function addPaymentMethod($data)
+    {
+        $userId = $_SESSION['userId'];
+        $name = $data->name;
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("INSERT INTO payment_methods_assigned_to_users VALUES (NULL, :userId, :name)");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':name', $name, PDO::PARAM_STR);
+        
+        return $statement->execute();
+    }
+
+    
+    public static function getPaymentMethodIdByName($name)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT id FROM payment_methods_assigned_to_users WHERE user_id = :userId AND name = :name");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':name', $name, PDO::PARAM_STR);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function deleteExpenseCategory($categoryId)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("DELETE FROM expenses_category_assigned_to_users WHERE user_id = :userId AND id = :categoryId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+
+        return $statement->execute();
+    }
+
+    public static function getExpenseDetailsInCategory($categoryId)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT amount, date_of_expense AS date, expense_comment AS comment FROM expenses 
+        WHERE user_id = :userId AND expense_category_assigned_to_user_id = :categoryId ORDER BY amount DESC");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function deletePaymentMethod($paymentMethodId)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("DELETE FROM payment_methods_assigned_to_users WHERE user_id = :userId AND id = :paymentMethodId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':paymentMethodId', $paymentMethodId, PDO::PARAM_INT);
+
+        return $statement->execute();
+    }
+
+    public static function getExpenseDetailsWithPaymentMethod($paymentMethodId)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("SELECT amount, date_of_expense AS date, expense_comment AS comment FROM expenses 
+        WHERE user_id = :userId AND payment_method_assigned_to_user_id = :paymentMethodId ORDER BY amount DESC");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':paymentMethodId', $paymentMethodId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
 
 
 

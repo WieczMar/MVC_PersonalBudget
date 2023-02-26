@@ -7,7 +7,7 @@ use \App\Models\Expense;
 use \App\Models\Income;
 use \App\Flash;
 
-//Signin controller
+// Balance controller
 class Balance extends Authenticated
 {
     const CURRENT_MONTH = 'Current month';

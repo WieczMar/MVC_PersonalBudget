@@ -7,7 +7,7 @@ use \App\Models\User;
 use \App\Auth;
 use \App\Flash;
 
-//Signin controller
+// Signin controller
 class Signin extends \Core\Controller
 {
     //Before filter

@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use \Core\View;
 
-//Home controller
+// Home controller
 class Home extends \Core\Controller
 {
     //Before filter
