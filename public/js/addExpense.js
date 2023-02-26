@@ -24,8 +24,6 @@ const getSumOfExpensesInMonthForCategory = async (id, date) => {
 
 // Render results on view
 const renderOnDOM = (monthlyLimitForCategory, sumOfExpensesInMonthForCategory) => {
-    const categoryDropDownList = document.querySelector('#categoryId');
-    const dateInput = document.querySelector('#date');
     const monthlyLimitBanner = document.querySelector('#monthlyLimitBanner');
     const alreadySpentInMonthBanner = document.querySelector('#alreadySpentInMonthBanner');
     const collapsibleBanner = document.querySelector('#collapsibleBanner');
@@ -57,6 +55,8 @@ const checkLimits = async (id, date) => {
 
 const addListeners = () => {
     // Category changing
+    const categoryDropDownList = document.querySelector('#categoryId');
+    const dateInput = document.querySelector('#date');
     categoryDropDownList.addEventListener('change', function () {
         const date = dateInput.value;
         const id = categoryDropDownList.value;
