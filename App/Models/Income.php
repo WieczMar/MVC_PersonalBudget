@@ -163,9 +163,25 @@ class Income extends \Core\Model
         $statement = $db->prepare("DELETE FROM incomes_category_assigned_to_users WHERE user_id = :userId AND id = :categoryId");
         $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
         $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $statement->execute();
 
-        return $statement->execute();
+        return ($statement->rowCount() > 0);
     }
+
+    public static function deleteIncome($incomeId)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("DELETE FROM incomes WHERE user_id = :userId AND id = :incomeId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':incomeId', $incomeId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return ($statement->rowCount() > 0);
+    }
+
 
     
 

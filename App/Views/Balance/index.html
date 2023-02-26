@@ -245,7 +245,7 @@
 </div>
 
 <!-- Category Details Modal -->
-<div class="modal fade" id="categoryDetailsModal" tabindex="-1" aria-labelledby="categoryDetailsModalLabel" aria-hidden="true">
+<div class="modal fade" id="categoryDetailsModal" tabindex="-1" aria-labelledby="categoryDetailsModalLabel" aria-hidden="true" data-bs-dismiss="modal">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
@@ -259,11 +259,32 @@
                         <th>Amount</th>
                         <th>Date</th>
                         <th>Comment</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                 </tbody>
             </table>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Deleting Confirmation Message Modal -->
+<div class="modal fade" id="delitingConfirmationModal" tabindex="-1" aria-labelledby="delitingConfirmationModalLabel" aria-hidden="true"> 
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="delitingConfirmationModalLabel">Deleting confirmation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div id="delitingConfirmationMessageModal" class="ms-4 me-4">
+                Test 
+            </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-around">
+            <button type="submit" class="btn btn-primary button col-10 col-sm-3" data-bs-dismiss="modal" id="delitingConfirmationButtonModal">OK</button>
         </div>
       </div>
     </div>

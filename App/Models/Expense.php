@@ -259,8 +259,9 @@ class Expense extends \Core\Model
         $statement = $db->prepare("DELETE FROM expenses_category_assigned_to_users WHERE user_id = :userId AND id = :categoryId");
         $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
         $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $statement->execute();
 
-        return $statement->execute();
+        return ($statement->rowCount() > 0);
     }
 
     public static function getExpenseDetailsInCategory($categoryId)
@@ -287,8 +288,9 @@ class Expense extends \Core\Model
         $statement = $db->prepare("DELETE FROM payment_methods_assigned_to_users WHERE user_id = :userId AND id = :paymentMethodId");
         $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
         $statement->bindValue(':paymentMethodId', $paymentMethodId, PDO::PARAM_INT);
+        $statement->execute();
 
-        return $statement->execute();
+        return ($statement->rowCount() > 0);
     }
 
     public static function getExpenseDetailsWithPaymentMethod($paymentMethodId)
@@ -304,6 +306,20 @@ class Expense extends \Core\Model
         $statement->execute();
 
         return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function deleteExpense($expenseId)
+    {
+        $userId = $_SESSION['userId'];
+
+        $db = static::getDB();
+
+        $statement = $db->prepare("DELETE FROM expenses WHERE user_id = :userId AND id = :expenseId");
+        $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':expenseId', $expenseId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return ($statement->rowCount() > 0);
     }
     
 

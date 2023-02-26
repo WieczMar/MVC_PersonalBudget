@@ -107,6 +107,20 @@ class Income extends Authenticated
             echo json_encode($error, JSON_UNESCAPED_UNICODE);
         }
     }
+
+    public function deleteIncomeAction()
+    {   
+        $incomeId = $this->route_params['id'];
+
+        if(IncomeModel::deleteIncome($incomeId)){
+            http_response_code(200);
+            echo json_encode('Income has been deleted.', JSON_UNESCAPED_UNICODE);
+        } else {
+            http_response_code(400);
+            $error = "Income with such id does not exist.";
+            echo json_encode($error, JSON_UNESCAPED_UNICODE);
+        }
+    }
     
 
 

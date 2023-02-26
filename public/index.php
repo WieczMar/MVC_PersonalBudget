@@ -27,6 +27,7 @@ $router->add('api/income-category', ['controller' => 'Income', 'action' => 'edit
 $router->add('api/income-category-new', ['controller' => 'Income', 'action' => 'addIncomeCategory']);
 
 $router->add('api/income-category-dump/{id:[\d]+}', ['controller' => 'Income', 'action' => 'deleteIncomeCategory']);
+$router->add('api/income-dump/{id:[\d]+}', ['controller' => 'Income', 'action' => 'deleteIncome']);
 
 $router->add('api/expense-limit/{id:[\d]+}', ['controller' => 'Expense', 'action' => 'getLimitOfExpensesInCategory']);
 $router->add('api/expense-sum/{id:[\d]+}', ['controller' => 'Expense', 'action' => 'getSumOfExpensesInCategoryForSelectedMonth']);
@@ -42,6 +43,7 @@ $router->add('api/expense-payment-method-new', ['controller' => 'Expense', 'acti
 
 $router->add('api/expense-category-dump/{id:[\d]+}', ['controller' => 'Expense', 'action' => 'deleteExpenseCategory']);
 $router->add('api/expense-payment-method-dump/{id:[\d]+}', ['controller' => 'Expense', 'action' => 'deletePaymentMethod']);
+$router->add('api/expense-dump/{id:[\d]+}', ['controller' => 'Expense', 'action' => 'deleteExpense']);
 
 $router->add('api/username', ['controller' => 'Settings', 'action' => 'getUsername']);
 $router->add('api/settings/username', ['controller' => 'Settings', 'action' => 'editUsername']);

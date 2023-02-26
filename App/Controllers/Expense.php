@@ -180,4 +180,18 @@ class Expense extends Authenticated
         }
     }
 
+    public function deleteExpenseAction()
+    {   
+        $expenseId = $this->route_params['id'];
+
+        if(ExpenseModel::deleteExpense($expenseId)){
+            http_response_code(200);
+            echo json_encode('Expense has been deleted.', JSON_UNESCAPED_UNICODE);
+        } else {
+            http_response_code(400);
+            $error = "Expense with such id does not exist.";
+            echo json_encode($error, JSON_UNESCAPED_UNICODE);
+        }
+    }
+
 }
