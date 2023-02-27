@@ -13,9 +13,8 @@ const addPeriodOptionListener = () => {
   });
 };
 
-
+// Get data from tables to draw pieCharts
 const drawPieCharts = () => {
-  //Get data from tables to draw pieCharts
   const incomesTable = document.querySelector('#incomesTable');
   const expensesTable = document.querySelector('#expensesTable');
   const incomesRowsLength = incomesTable.rows.length;
