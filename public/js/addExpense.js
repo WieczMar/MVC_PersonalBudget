@@ -1,3 +1,14 @@
+const categoryDropDownList = document.querySelector('#categoryId');
+const dateInput = document.querySelector('#date');
+const amountInput = document.querySelector('#amount');
+const monthlyLimitBanner = document.querySelector('#monthlyLimitBanner');
+const alreadySpentInMonthBanner = document.querySelector('#alreadySpentInMonthBanner');
+const collapsibleBanner = document.querySelector('#collapsibleBanner');
+const collapsibleLimitWarning = document.querySelector('#collapsibleLimitWarning');
+const collapsibleLimitInfo = document.querySelector('#collapsibleLimitInfo');
+const predictedSumOfExpensesWarningLabel = document.querySelector('#predictedSumOfExpensesWarningLabel');
+const predictedSumOfExpensesLabel = document.querySelector('#predictedSumOfExpensesLabel');
+
 // Set today date by default in date input
 const setCurrentDate = () => {
     Date.prototype.toDateInputValue = (function() {
@@ -13,61 +24,84 @@ const getMonthlyLimitForCategory = async (id) => {
     return fetch(`http://localhost/api/expense-limit/${id}`)
         .then((response) => response.json())
         .then((data) => data[0].monthly_limit);
-}
+};
 
 // API GET method
 const getSumOfExpensesInMonthForCategory = async (id, date) => {
     return fetch(`http://localhost/api/expense-sum/${id}?date=${date}`)
         .then((response) => response.json())
         .then((data) => data[0].categoryAmount);
-}
+};
+
+const hideElement = (element) => {
+    if (!element.classList.contains("collapsible")) element.classList.toggle("collapsible"); 
+};
+
+const showElement = (element) => {
+    if (element.classList.contains("collapsible")) element.classList.toggle("collapsible"); 
+};
 
 // Render results on view
-const renderOnDOM = (monthlyLimitForCategory, sumOfExpensesInMonthForCategory) => {
-    const monthlyLimitBanner = document.querySelector('#monthlyLimitBanner');
-    const alreadySpentInMonthBanner = document.querySelector('#alreadySpentInMonthBanner');
-    const collapsibleBanner = document.querySelector('#collapsibleBanner');
+const renderOnDOM = (monthlyLimitForCategory, sumOfExpensesInMonthForCategory, extraAmount) => {
+    const predictedSumOfExpenses = parseInt(sumOfExpensesInMonthForCategory) + parseInt(extraAmount);
 
     if (monthlyLimitForCategory === null) {
-        if (!collapsibleBanner.classList.contains("collapsible")) 
-            collapsibleBanner.classList.toggle("collapsible");
+        hideElement(collapsibleBanner);
     }
     else {
         monthlyLimitBanner.innerHTML = monthlyLimitForCategory + " zł";
-        if (collapsibleBanner.classList.contains("collapsible")) 
-            collapsibleBanner.classList.toggle("collapsible");
+        showElement(collapsibleBanner);
+        alreadySpentInMonthBanner.innerHTML = Math.round(sumOfExpensesInMonthForCategory) + " zł";
+
+        if (Math.round(sumOfExpensesInMonthForCategory) > monthlyLimitForCategory) {
+            alreadySpentInMonthBanner.setAttribute("class", "flash-message-warning");
+        } else if (Math.round(sumOfExpensesInMonthForCategory) < monthlyLimitForCategory) {
+            alreadySpentInMonthBanner.setAttribute("class", "flash-message-success");
+        }
+
+        if((predictedSumOfExpenses > monthlyLimitForCategory) && (extraAmount != 0)) {
+            predictedSumOfExpensesWarningLabel.innerHTML = predictedSumOfExpenses + " zł";
+            hideElement(collapsibleLimitInfo);
+            showElement(collapsibleLimitWarning);
+        } else if ((predictedSumOfExpenses < monthlyLimitForCategory) && (extraAmount != 0)) {
+            predictedSumOfExpensesLabel.innerHTML = predictedSumOfExpenses + " zł";
+            hideElement(collapsibleLimitWarning);
+            showElement(collapsibleLimitInfo);
+        } else {
+            hideElement(collapsibleLimitInfo);
+            hideElement(collapsibleLimitWarning);
+        };
     }
-
-    alreadySpentInMonthBanner.innerHTML = Math.round(sumOfExpensesInMonthForCategory) + " zł";
-
-    if (Math.round(sumOfExpensesInMonthForCategory) > monthlyLimitForCategory)
-        alreadySpentInMonthBanner.setAttribute("class", "flash-message-warning");
-    else if (Math.round(sumOfExpensesInMonthForCategory) < monthlyLimitForCategory)
-        alreadySpentInMonthBanner.setAttribute("class", "flash-message-success");
 }
 
 // Check limit and total spendings in month for category and  
-const checkLimits = async (id, date) => {
+const checkLimits = async () => {
+    const date = dateInput.value;
+    const id = categoryDropDownList.value;
+    let extraAmount = amountInput.value;
+
     const monthlyLimitForCategory = await getMonthlyLimitForCategory(id);
-    const sumOfExpensesInMonthForCategory = await getSumOfExpensesInMonthForCategory(id, date);
-    renderOnDOM(monthlyLimitForCategory, sumOfExpensesInMonthForCategory);
+    let sumOfExpensesInMonthForCategory = await getSumOfExpensesInMonthForCategory(id, date);
+
+    if(extraAmount === null || extraAmount === undefined || extraAmount === '') extraAmount = 0;
+    if(sumOfExpensesInMonthForCategory === null) sumOfExpensesInMonthForCategory = 0;
+
+    renderOnDOM(monthlyLimitForCategory, sumOfExpensesInMonthForCategory, extraAmount);
 }
 
 const addListeners = () => {
-    // Category changing
-    const categoryDropDownList = document.querySelector('#categoryId');
-    const dateInput = document.querySelector('#date');
     categoryDropDownList.addEventListener('change', function () {
-        const date = dateInput.value;
-        const id = categoryDropDownList.value;
-        checkLimits(id, date);
+        checkLimits();
     });
-
-    // Date changing
     dateInput.addEventListener('change', function () {
-        const date = dateInput.value;
-        const id = categoryDropDownList.value;
-        checkLimits(id, date);
+        if (categoryDropDownList.selectedIndex !== 0) {
+            checkLimits();
+        }
+    });
+    amountInput.addEventListener('change', function () {
+        if (categoryDropDownList.selectedIndex !== 0) {
+            checkLimits();
+        }
     });
 };
 

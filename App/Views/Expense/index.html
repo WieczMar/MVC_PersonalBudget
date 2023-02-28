@@ -84,7 +84,7 @@
   <div class="row justify-content-center align-items-center">
       <div class="col-10 col-md-8 col-lg-6 col-xl-5 panel">
         {% if flashMessages.savingTransactionResult %}
-        <div class="d-flex justify-content-center flash-message flash-message-{{flashMessages.savingTransactionResult.type}}">{{flashMessages.savingTransactionResult.body}}</div>
+        <div class="text-center flash-message flash-message-{{flashMessages.savingTransactionResult.type}}">{{flashMessages.savingTransactionResult.body}}</div>
         {% endif %}
           <div class="text-center panel-title">Add expense</div>
           <form action="/expense/add" method="post">
@@ -167,6 +167,17 @@
                                 <div id="alreadySpentInMonthBanner">y zł</div>
                             </div>
                         </div>
+                    </div>
+                    <div class="mt-2" id="collapsibleLimitWarning">
+                        <div class="mt-2 text-center fw-bold">
+                            WARNING!
+                        </div>
+                        <div>
+                            <p class="ms-md-2 ms-xxl-3 mb-0">If you add this expense, your monthly limit will be exceeded for this category in total:&nbsp;&nbsp;<strong class="text-danger" id="predictedSumOfExpensesWarningLabel">xxxx</strong></p>
+                        </div>
+                    </div>
+                    <div class="mt-2" id="collapsibleLimitInfo">
+                        <p class="ms-md-2 ms-xxl-3 mb-0">If you add this expense, all expenses for this category will total:&nbsp;&nbsp;<strong class="text-success" id="predictedSumOfExpensesLabel">xxxx</strong></p>
                     </div>
                 </div>
             </div>
