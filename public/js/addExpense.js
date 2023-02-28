@@ -21,14 +21,14 @@ const setCurrentDate = () => {
 
 // API GET method
 const getMonthlyLimitForCategory = async (id) => {
-    return fetch(`http://localhost/api/expense-limit/${id}`)
+    return fetch(`localhost/api/expense-limit/${id}`)
         .then((response) => response.json())
         .then((data) => data[0].monthly_limit);
 };
 
 // API GET method
 const getSumOfExpensesInMonthForCategory = async (id, date) => {
-    return fetch(`http://localhost/api/expense-sum/${id}?date=${date}`)
+    return fetch(`localhost/api/expense-sum/${id}?date=${date}`)
         .then((response) => response.json())
         .then((data) => data[0].categoryAmount);
 };
@@ -90,15 +90,15 @@ const checkLimits = async () => {
 }
 
 const addListeners = () => {
-    categoryDropDownList.addEventListener('change', function () {
+    categoryDropDownList.addEventListener('change', async () => {
         checkLimits();
     });
-    dateInput.addEventListener('change', function () {
+    dateInput.addEventListener('change', async () => {
         if (categoryDropDownList.selectedIndex !== 0) {
             checkLimits();
         }
     });
-    amountInput.addEventListener('change', function () {
+    amountInput.addEventListener('input', async () => {
         if (categoryDropDownList.selectedIndex !== 0) {
             checkLimits();
         }
